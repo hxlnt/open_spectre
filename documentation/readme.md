@@ -4,47 +4,47 @@ Design Hierarchy
 Hierarchy of tb_test_digital_side is:
 
 tb_test_digital_side
-    ├─ test_digital_side : test_digital_side 
-        │   ├─ counter : x_counter 
-        │   ├─ counter : y_counter
-        │   ├─ xor18 : xy_invert_logic
-        │   ├─ slow_counter : slow_counter
+    ├─ test_digital_side : test_digital_side (needs intergation TB?)
+        │   ├─ counter : x_counter (needs TB!)
+        │   ├─ counter : y_counter (needs TB!)
+        │   ├─ xor18 : xy_invert_logic (passed)
+        │   ├─ slow_counter : slow_counter (passed)
                 │   ├─ pulse_generator : hz6_counter 
                 │   ├─ pulse_generator : hz3_counter
                 │   ├─ pulse_generator : hz1_5_counter
                 │   ├─ pulse_generator : hz_6_counter
                 │   ├─ pulse_generator : hz_4_counter
                 │   ├─ pulse_generator : hz_2_counter
-        │   ├─ nand4 : overlay_gates 
-        │   ├─ invert_4 : inverters
-        │   ├─ monstable_4 : edge
+        │   ├─ nand4 : overlay_gates (passed)
+        │   ├─ invert_4 : inverters (passed)
+        │   ├─ monstable_4 : edge (passed)
                 │   ├─ edge_detector : ed_1 
                 │   ├─ edge_detector : ed_2
                 │   ├─ edge_detector : ed_3
                 │   ├─ edge_detector : ed_4
-        │   ├─ delay_800us : delay_800 
-        │   ├─ d_flipflop_ext : flip_flop1
-        │   ├─ d_flipflop_ext : flip_flop2
-        │   ├─ compare_7 : comparitor
-                │   ├─ window_comparator : wc_5 
-                │   ├─ window_comparator : wc_4
-                │   ├─ window_comparator : wc_3
-                │   ├─ window_comparator : wc_2
-                │   ├─ window_comparator : wc_1
-                │   ├─ window_comparator : wc_0
-                │   ├─ xor_n : xor_n
-        │   ├─ xor_n : matrix_input_inverters 
-        │   ├─ or_matrix_full : pin_matrix
+        │   ├─ delay_800us : delay_800 (no working TB!)
+        │   ├─ d_flipflop_ext : flip_flop1 (passed)
+        │   ├─ d_flipflop_ext : flip_flop2 (passed)
+        │   ├─ compare_7 : comparator (not passing atm!)
+                │   ├─ window_comparator : wc_5 (passed)
+                │   ├─ window_comparator : wc_4 (passed)
+                │   ├─ window_comparator : wc_3 (passed)
+                │   ├─ window_comparator : wc_2 (passed)
+                │   ├─ window_comparator : wc_1 (passed)
+                │   ├─ window_comparator : wc_0 (passed)
+                │   ├─ xor_n : xor_n (passed)
+        │   ├─ xor_n : matrix_input_inverters (passed)
+        │   ├─ or_matrix_full : pin_matrix (passed)
                 │   ├─ xpoint_or : or_mattrix 
-        │   ├─ xor_n : luma_output 
-        │   ├─ mux_5 : chroma_output
+        │   ├─ xor_n : luma_output (passed)
+        │   ├─ mux_5 : chroma_output (passed)
                 │   ├─ mux2_1 : mux1 
                 │   ├─ mux2_1 : mux2
                 │   ├─ mux2_1 : mux3
                 │   ├─ mux2_1 : mux4
                 │   ├─ mux2_1 : mux5
                 │   ├─ mux2_1 : mux6
-    ├─ write_file_ex : write_file_ex 
+    ├─ write_file_ex : write_file_ex (simulation only)
 -------------------------------------------------------------
 </pre>
 <pre>
