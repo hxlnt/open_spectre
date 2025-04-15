@@ -3,7 +3,7 @@ Design Hierarchy
 -------------------------------------------------------------
 Hierarchy of tb_test_digital_side is:
     
-**** INDIVIDUAL MODULES PASSED 100% ****
+**** INDIVIDUAL MODULES PASSED 90% ****
     
 tb_test_digital_side
     ├─ test_digital_side : test_digital_side (needs intergation TB?)
@@ -24,7 +24,7 @@ tb_test_digital_side
                 │   ├─ edge_detector : ed_2
                 │   ├─ edge_detector : ed_3
                 │   ├─ edge_detector : ed_4
-        │   ├─ delay_800us : delay_800 (no working TB!)
+        │   ├─ delay_800us : delay_800 ----------------------->(no working TB!)
         │   ├─ d_flipflop_ext : flip_flop1 (passed)
         │   ├─ d_flipflop_ext : flip_flop2 (passed)
         │   ├─ compare_7 : comparator (passed)
