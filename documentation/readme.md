@@ -85,8 +85,8 @@ tb_analog_side
                         │   ├─ audiomixer : audiomixer
                         │   ├─ audiomixer : audiomixer
                         │   ├─ audiomixer : audiomixer
-        │   ├─ sinwavegenerator : osc1 
-        │   ├─ sinwavegenerator : osc2
+        │   ├─ sinwavegenerator : osc1 (passed) --------------> needs wave distort added
+        │   ├─ sinwavegenerator : osc2 (passed) --------------> needs wave distort added
         │   ├─ random_voltage : random_1
                 │   ├─ shift_sipo : sipo_1 
                 │   ├─ shift_sipo : sipo_2
