@@ -2,11 +2,13 @@ Design Hierarchy
 <pre>
 -------------------------------------------------------------
 Hierarchy of tb_test_digital_side is:
-
+    
+**** INDIVIDUAL MODULES PASSED 100% ****
+    
 tb_test_digital_side
     ├─ test_digital_side : test_digital_side (needs intergation TB?)
-        │   ├─ counter : x_counter (needs TB!)
-        │   ├─ counter : y_counter (needs TB!)
+        │   ├─ counter : x_counter (passed no TB)
+        │   ├─ counter : y_counter (passed no TB)
         │   ├─ xor18 : xy_invert_logic (passed)
         │   ├─ slow_counter : slow_counter (passed)
                 │   ├─ pulse_generator : hz6_counter 
