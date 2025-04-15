@@ -25,7 +25,7 @@ tb_test_digital_side
         │   ├─ delay_800us : delay_800 (no working TB!)
         │   ├─ d_flipflop_ext : flip_flop1 (passed)
         │   ├─ d_flipflop_ext : flip_flop2 (passed)
-        │   ├─ compare_7 : comparator (not passing atm!) * THE COMPARITORS OUTPUTS HAVE OVERLAPS look for > vs >=
+        │   ├─ compare_7 : comparator (passed)
                 │   ├─ window_comparator : wc_5 (passed)
                 │   ├─ window_comparator : wc_4 (passed)
                 │   ├─ window_comparator : wc_3 (passed)
