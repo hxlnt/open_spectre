@@ -43,9 +43,9 @@ begin
     stim_proc: process
         variable i : integer := 0;
     begin
-        span <= x"10";  -- Fixed span
+        span <= x"1f";  -- Fixed span
 
-        wait for clk_period * 2;  -- Let things settle
+        wait for clk_period * 12;  -- Let things settle
 
         for i in 0 to 255 loop
             luma_i <= std_logic_vector(to_unsigned(i, 8));

@@ -28,7 +28,7 @@ entity compare_7 is
 end compare_7;
 
 architecture Behavioral of compare_7 is
-signal span_div_6,span_1,span_2,span_3,span_4,span_5,span_6:  STD_LOGIC_VECTOR (7 downto 0); --create signals to hold comparitor values
+signal span_div,span_1,span_2,span_3,span_4,span_5:  STD_LOGIC_VECTOR (7 downto 0); --create signals to hold comparitor values
 signal wc_out : std_logic_vector (5 downto 0);
 signal xor_a : std_logic_vector (6 downto 0);
 signal xor_b : std_logic_vector (6 downto 0);
@@ -40,17 +40,19 @@ begin
     
 
     wc_5: entity work.window_comparator
-        port map (input => luma_i, lower => span_1, upper => span, output => wc_out(5));
+        port map (input => luma_i, lower => span_4, upper => x"ff", output => wc_out(5));
     wc_4: entity work.window_comparator
-        port map (input => luma_i, lower => span_2, upper => span_1, output => wc_out(4));
+        port map (input => luma_i, lower => span_3, upper => span_4, output => wc_out(4));
     wc_3: entity work.window_comparator
-        port map (input => luma_i, lower => span_3, upper => span_2, output => wc_out(3));
+        port map (input => luma_i, lower => span_2, upper => span_3, output => wc_out(3));
     wc_2: entity work.window_comparator
-        port map (input => luma_i, lower => span_4, upper => span_3, output => wc_out(2));
+        port map (input => luma_i, lower => span_1, upper => span_2, output => wc_out(2));
     wc_1: entity work.window_comparator
-        port map (input => luma_i, lower => span_5, upper => span_4, output => wc_out(1));
+        port map (input => luma_i, lower => span_div, upper => span_1, output => wc_out(1));
     wc_0: entity work.window_comparator
-        port map (input => luma_i, lower => span_6, upper => span_5, output => wc_out(0));
+        generic map(LOWEST_COMP => true)
+        port map (input => luma_i, lower => x"00", upper => span_div, output => wc_out(0)); -- lewer is 1 so that 0 always sets window comp 1
+        
         
     xor_n: entity work.xor_n
         generic map (n => 7) port map (a => xor_a, b => xor_b, y => output);
@@ -58,15 +60,13 @@ begin
 process (clk)   --update comparitor values
     begin
      if rising_edge(clk) then
-        span_div_6 <= std_logic_vector(to_unsigned(to_integer(unsigned(span)) / comp_num,8)) ;
-        span_1 <= span - span_div_6;
-        span_2 <= span - span_div_6 - span_div_6;
-        span_3 <= span - span_div_6 - span_div_6 - span_div_6;
-        span_4 <= span_div_6 + span_div_6 + span_div_6;
-        span_5 <= span_div_6 + span_div_6;
-        span_6 <= span_div_6;
-        
-        xor_a <= '0' & wc_out(5) & wc_out(4) & wc_out(3) & wc_out(2) & wc_out(1) & wc_out(0);
+        span_div <= std_logic_vector(to_unsigned(to_integer(unsigned(span)) / comp_num,8)) ;
+        span_1 <= span_div + span_div;
+        span_2 <= span_div + span_div + span_div;
+        span_3 <= span_div + span_div + span_div + span_div;
+        span_4 <= span_div + span_div + span_div + span_div + span_div;
+
+        xor_a <= '0'       & wc_out(5) & wc_out(4) & wc_out(3) & wc_out(2) & wc_out(1) & wc_out(0);
         xor_b <= wc_out(5) & wc_out(4) & wc_out(3) & wc_out(2) & wc_out(1) & wc_out(0) & '1';
     end if;
     end process;
