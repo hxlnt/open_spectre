@@ -24,7 +24,7 @@ entity random_voltage is
     slew_in : in std_logic_vector(2 downto 0);
     noise_1 : out std_logic_vector(9 downto 0);
     noise_2 : out std_logic_vector(9 downto 0);
-    extra_in   : in std_logic
+    extra_in   : in std_logic := '0'
     );
 
 end random_voltage;
