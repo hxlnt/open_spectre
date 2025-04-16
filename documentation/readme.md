@@ -88,7 +88,7 @@ tb_analog_side
                         │   ├─ audiomixer : audiomixer
         │   ├─ sinwavegenerator : osc1 (passed) --------------> needs wave distort added
         │   ├─ sinwavegenerator : osc2 (passed) --------------> needs wave distort added
-        │   ├─ random_voltage : random_1 --------------------------------------------> seems to get stuck in boring sinwave wave-like patterns
+        │   ├─ random_voltage : random_1 --------------------------------------------> seems to get stuck in boring sinwave wave-like patterns, NEEDS 4 INPUTS TO SIMULATE THE FLOATING PINS, PARALELL lfsr?
     
                 │   ├─ shift_sipo : sipo_1 (*)
                 │   ├─ shift_sipo : sipo_2 (*)
