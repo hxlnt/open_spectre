@@ -28,7 +28,7 @@ end shift_sipo;
 
 architecture exam of shift_sipo is
 
-  signal temp : std_logic_vector(7 downto 0) := "10010110";
+  signal temp : std_logic_vector(7 downto 0) := "10000110";
   signal Sin  : std_logic;
 
 begin
@@ -41,7 +41,7 @@ begin
 
     if (Clock'event and Clock = '1') then
     if rst = '1' then
-        temp <= (others => '0');
+        temp <= "10000110";
     else
       temp <= temp(6 downto 0) & Sin;
 
