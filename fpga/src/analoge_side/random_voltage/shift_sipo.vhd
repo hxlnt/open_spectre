@@ -28,7 +28,7 @@ end shift_sipo;
 
 architecture exam of shift_sipo is
 
-  signal temp : std_logic_vector(7 downto 0);
+  signal temp : std_logic_vector(7 downto 0) := "10010110";
   signal Sin  : std_logic;
 
 begin
