@@ -93,7 +93,7 @@ tb_analog_side
                 │   ├─ shift_sipo : sipo_1 ------------------> sipo treats counter as clock, needs clock and RE detect to reset the sipo properly
                 │   ├─ shift_sipo : sipo_2 ------------------> sipo treats counter as clock, needs clock and RE detect to reset the sipo properly
                 │   ├─ mux_8_to_1 : mux_random (*)
-                │   ├─ counter : random_freq
+                │   ├─ counter : random_freq (*)
                 │   ├─ slew_wraper : slew_output_1 ------------------------------------> (NOT WORKING)
                         │   ├─ moving_average : slew_fast 
                         │   ├─ moving_average : slew_med
