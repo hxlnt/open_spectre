@@ -88,17 +88,18 @@ tb_analog_side
                         │   ├─ audiomixer : audiomixer
         │   ├─ sinwavegenerator : osc1 (passed) --------------> needs wave distort added
         │   ├─ sinwavegenerator : osc2 (passed) --------------> needs wave distort added
-        │   ├─ random_voltage : random_1
-                │   ├─ shift_sipo : sipo_1 
-                │   ├─ shift_sipo : sipo_2
-                │   ├─ mux_8_to_1 : mux_random
+        │   ├─ random_voltage : random_1 --------------------------------------------> seems to get stuck in boring sinwave wave-like patterns
+    
+                │   ├─ shift_sipo : sipo_1 (*)
+                │   ├─ shift_sipo : sipo_2 (*)
+                │   ├─ mux_8_to_1 : mux_random (*)
                 │   ├─ counter : random_freq
-                │   ├─ slew_wraper : slew_output_1
+                │   ├─ slew_wraper : slew_output_1 ------------------------------------> (NOT WORKING)
                         │   ├─ moving_average : slew_fast 
                         │   ├─ moving_average : slew_med
                         │   ├─ moving_average : slew_slow
                         │   ├─ moving_average : slew_snail
-                │   ├─ slew_wraper : slew_output_2 
+                │   ├─ slew_wraper : slew_output_2 ------------------------------------> (NOT WORKING)
                         │   ├─ moving_average : slew_fast 
                         │   ├─ moving_average : slew_med
                         │   ├─ moving_average : slew_slow
