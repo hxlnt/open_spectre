@@ -38,12 +38,34 @@ architecture Behavioral of random_voltage is
   signal mux_in, mux_in_des : std_logic_vector(7 downto 0) := "01100011"; -- only inputs 0,1,5,6 are set to gnd so i set the rest to 1 i guess
   signal sipo_dac_1, sipo_dac_2 : std_logic_vector(3 downto 0);
   signal mux_sel_in : std_logic_vector(2 downto 0);
+  signal recycle_d : std_logic := '0';
+  signal sipo_b_rst : std_logic := '0';
+  signal recycle_re,recycle_re_d,recycle_re_d2,recycle_re_d3 : std_logic := '0'; -- 
+  signal recycle_stretched: std_logic := '0'; -- 
 
 begin
 
   mux_in <= extra_in & noise_1_to_slew(0) & noise_freq(2 downto 0) & extra_in & noise_1_to_slew(1) & '1';
 
   sipo_clk <= cnt_match;
+  
+  process (Clock)
+  begin
+    if rising_edge(Clock) then
+    recycle_d <= recycle;
+    recycle_re_d <= recycle_re;
+    recycle_re_d2 <= recycle_re_d;
+    recycle_re_d3 <= recycle_re_d2;
+    
+    recycle_stretched <= recycle_re or recycle_re_d or recycle_re_d2 or recycle_re_d3;
+    
+    if recycle = '1' and recycle_d = '0' then
+        recycle_re <= '1';
+        else
+        recycle_re <= '0';
+       end if;
+    end if;
+  end process;
   
   sipo_1 : entity work.shift_sipo
     port map(
@@ -69,7 +91,7 @@ begin
         );
 
     mux_in_des <= mux_in(7 downto 0);
-    mux_sel_in <= spio_out_2(7)&spio_out_2(5)&(recycle);
+    mux_sel_in <= spio_out_2(7)&spio_out_2(5)&(recycle_stretched);
     
   mux_random : entity work.mux_8_to_1
       Port map( 
