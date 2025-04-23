@@ -28,9 +28,9 @@ architecture Behavioral of mixer_test_bench is
   signal wr       : std_logic := '0';
   signal out_addr : integer := 0;
   signal ch_addr  : integer := 0;
-  signal gain_in  : std_logic_vector(3 downto 0) := "0000";
-  signal mixer_inputs : array_12(9 downto 0);
-  signal outputs : array_12(9 downto 0);
+  signal gain_in  : std_logic_vector(4 downto 0) := "00000";
+  signal mixer_inputs : array_12(10 downto 0);
+  signal outputs : array_12(19 downto 0);
     -- Signal to stop simulation
   signal stop_simulator : boolean := false;
   
