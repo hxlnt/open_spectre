@@ -41,8 +41,9 @@ use ieee.numeric_std.all;
  
 entity delay_800us is
   generic (
-    g_WIDTH : natural := 1;
-    g_DEPTH : integer := 200 -- needs actual ti
+    g_WIDTH : natural := 2;
+    g_DEPTH : integer := 200 -- needs actual value to generqate delay
+    -- maybe send out a pin and bring it back?
     );
   port (
     i_rst_sync : in std_logic;

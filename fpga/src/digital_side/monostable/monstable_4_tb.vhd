@@ -38,7 +38,7 @@ begin
     begin
         wait for 5 ns;
         clk <= not clk;
-        if now > 100 ns then
+        if now > 500 ns then
             wait;
         end if;
     end process;

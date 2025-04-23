@@ -28,24 +28,37 @@ architecture behavioral of delay_800us_tb is
     signal clk: std_logic := '0';
     signal input: std_logic := '0';
     signal output: std_logic;
+    
+    signal input_bus:  std_logic_vector(1 downto 0);
+    signal output_bus:  std_logic_vector(1 downto 0);
+    
 begin
     -- Create a clock signal with a 50% duty cycle
     clk_process: process
     begin
         wait for 10 ns;
         clk <= not clk;
-        if now > 100 ns then
+        if now > 200000 ns then
             wait;
         end if;
     end process;
 
     -- Instantiate the design under test
     dut: entity work.delay_800us
+        generic map (
+        g_DEPTH => 5
+        )
         port map (
-            clk => clk,
-            input => input,
-            output => output
+            i_clk => clk,
+            i_rst_sync => '0',
+            i_wr_en => '1',
+            i_rd_en => '1',
+            i_wr_data => input_bus,
+            o_rd_data => output_bus
         );
+        
+     input_bus <= '0' & input;
+     output <= output_bus(0);
 
     -- Test the delay by toggling the input signal and checking the output
     test_process: process
