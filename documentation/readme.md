@@ -8,8 +8,8 @@ Hierarchy of tb_test_digital_side is:
     
 tb_test_digital_side
     ├─ test_digital_side : test_digital_side (needs intergation TB?)
-        │   ├─ counter : x_counter (* no TB)
-        │   ├─ counter : y_counter (* no TB)
+        │   ├─ counter : counter_re (*)
+        │   ├─ counter : counter_re (*)
         │   ├─ xor18 : xy_invert_logic (*)
         │   ├─ slow_counter : slow_counter (*)
                 │   ├─ pulse_generator : hz6_counter 
@@ -25,7 +25,7 @@ tb_test_digital_side
                 │   ├─ edge_detector : ed_2
                 │   ├─ edge_detector : ed_3
                 │   ├─ edge_detector : ed_4
-        │   ├─ delay_800us : delay_800 ----------------------->(no working TB!)
+        │   ├─ delay_800us : delay_800 (*)
         │   ├─ d_flipflop_ext : flip_flop1 (*)
         │   ├─ d_flipflop_ext : flip_flop2 (*)
         │   ├─ compare_7 : comparator (*)
@@ -66,7 +66,7 @@ tb_analog_side
         │   ├─ adder_12bit_nooverflow : fizz_1_mix (*)
         │   ├─ mixer_interface : analox_matrix
                 │   ├─ analog_matrix : analog_matrix 
-                        │   ├─ audiomixer : audiomixer 
+                        │   ├─ audiomixer : audiomixer (* binary) (currently set to binary mix, needs pipelinng to avoid large DSP usage)
                         │   ├─ audiomixer : audiomixer
                         │   ├─ audiomixer : audiomixer
                         │   ├─ audiomixer : audiomixer
@@ -107,9 +107,9 @@ tb_analog_side
         │   ├─ adder_12bit_nooverflow : y_dig_ann_mix (*)
         │   ├─ adder_12bit_nooverflow : u_dig_ann_mix (*)
         │   ├─ adder_12bit_nooverflow : v_dig_ann_mix (*)
-        │   ├─ yuv_levels : yuv_out_levels
-                │   ├─ alphablend : alphablend 
-                │   ├─ alphablend : alphablend
-                │   ├─ alphablend : alphablend
+        │   ├─ yuv_levels : yuv_out_levels (*)
+                │   ├─ alphablend : alphablend (*)
+                │   ├─ alphablend : alphablend (*)
+                │   ├─ alphablend : alphablend (*)
 -------------------------------------------------------------
 </pre>
