@@ -25,15 +25,10 @@ architecture sim of TestAudioMixer is
     signal clk : STD_LOGIC := '0';
     signal reset : STD_LOGIC := '0';
     signal inputs : array_12(9 downto 0);
-    signal gains : array_4(9 downto 0);
+    signal gains : array_5(9 downto 0);
     signal output : STD_LOGIC_VECTOR(11 downto 0);
     constant CLOCK_PERIOD : time := 10 ns;
     
-    -- Helper function to convert an integer to an array_12
-    function to_array_12(value : integer) return array_12 is
-    begin
-        return (others => to_unsigned(value, 12));
-    end function;
 
 begin
     -- Instantiate the DUT (Design Under Test)
@@ -63,19 +58,19 @@ begin
 
         -- Test 1: All inputs at maximum, no gains
         inputs <= (others => "111111111111");
-        gains <= (others => "0000");
+        gains <= (others => "00000");
         reset <= '0';
         wait for 10 ns;
         assert output = "000000000001" report "Test 1 failed" severity error;
 
         -- Test 2: All inputs at maximum, all gains at maximum
-        gains <= (others => "1111");
+        gains <= (others => "11111");
         wait for 10 ns;
         assert output = "011111111111" report "Test 2 failed" severity error;
 
         -- Test 3: Varying inputs and gains
-        inputs <= to_array_12(50);  -- Input 0 set to 50
-        gains <= (others => "0010"); -- Gain 0 set to 2
+        inputs <= (others => "000001100000");
+        gains <= (others => "00100"); -- Gain 0 set to 2
         wait for 10 ns;
         assert output = "000001100000" report "Test 3 failed" severity error;
 
