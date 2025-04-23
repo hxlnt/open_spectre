@@ -4,7 +4,7 @@ Design Hierarchy
 -------------------------------------------------------------
 Hierarchy of tb_test_digital_side is:
     
-**** INDIVIDUAL MODULES PASSED 90% ****
+**** INDIVIDUAL MODULES PASSED 95% ****
     
 tb_test_digital_side
     ├─ test_digital_side : test_digital_side (needs intergation TB?)
@@ -64,9 +64,9 @@ tb_analog_side
         │   ├─ adder_12bit_nooverflow : gear_1_mix (*)
         │   ├─ adder_12bit_nooverflow : lantern_1_mix (*)
         │   ├─ adder_12bit_nooverflow : fizz_1_mix (*)
-        │   ├─ mixer_interface : analox_matrix
+        │   ├─ mixer_interface : analox_matrix (the bones are here, but without the pipelined DSP it isn't really working)
                 │   ├─ analog_matrix : analog_matrix 
-                        │   ├─ audiomixer : audiomixer (* binary) (currently set to binary mix, needs pipelinng to avoid large DSP usage)
+                        │   ├─ audiomixer : audiomixer (* binary, 12bit works but the math isn't exact) (currently set to binary mix, needs pipelining to avoid large DSP usage)
                         │   ├─ audiomixer : audiomixer
                         │   ├─ audiomixer : audiomixer
                         │   ├─ audiomixer : audiomixer
@@ -88,22 +88,22 @@ tb_analog_side
                         │   ├─ audiomixer : audiomixer
         │   ├─ sinwavegenerator : osc1 (passed) --------------> needs wave distort added
         │   ├─ sinwavegenerator : osc2 (passed) --------------> needs wave distort added
-        │   ├─ random_voltage : random_1 --------------------------------------------> seems to get stuck in boring sinwave wave-like patterns, NEEDS 4 INPUTS TO SIMULATE THE FLOATING PINS, PARALELL lfsr?
+        │   ├─ random_voltage: random_1 --------------------------------------------> seems to get stuck in boring sinwave wave-like patterns, NEEDS 4 INPUTS TO SIMULATE THE FLOATING PINS, PARALELL lfsr?
     
                 │   ├─ shift_sipo : sipo_1 ------------------> sipo treats counter as clock, needs clock and RE detect to reset the sipo properly
                 │   ├─ shift_sipo : sipo_2 ------------------> sipo treats counter as clock, needs clock and RE detect to reset the sipo properly
                 │   ├─ mux_8_to_1 : mux_random (*)
                 │   ├─ counter : random_freq (*)
-                │   ├─ slew_wraper : slew_output_1 ------------------------------------> (NOT WORKING)
-                        │   ├─ moving_average : slew_fast 
-                        │   ├─ moving_average : slew_med
-                        │   ├─ moving_average : slew_slow
-                        │   ├─ moving_average : slew_snail
-                │   ├─ slew_wraper : slew_output_2 ------------------------------------> (NOT WORKING)
-                        │   ├─ moving_average : slew_fast 
-                        │   ├─ moving_average : slew_med
-                        │   ├─ moving_average : slew_slow
-                        │   ├─ moving_average : slew_snail
+                │   ├─ slew_wraper : slew_output_1 (* needs TB, needs slew delta values set based on testing)
+                        │   ├─ moving_average : slew_fast  (*)
+                        │   ├─ moving_average : slew_med (*)
+                        │   ├─ moving_average : slew_slow (*)
+                        │   ├─ moving_average : slew_snail (*)
+                │   ├─ slew_wraper : slew_output_2 (* needs TB, needs slew delta values set based on testing)
+                        │   ├─ moving_average : slew_fast (*)
+                        │   ├─ moving_average : slew_med (*)
+                        │   ├─ moving_average : slew_slow (*)
+                        │   ├─ moving_average : slew_snail (*)
         │   ├─ adder_12bit_nooverflow : y_dig_ann_mix (*)
         │   ├─ adder_12bit_nooverflow : u_dig_ann_mix (*)
         │   ├─ adder_12bit_nooverflow : v_dig_ann_mix (*)
