@@ -7,7 +7,8 @@ Hierarchy of tb_test_digital_side is:
 **** INDIVIDUAL MODULES PASSED 95% ****
     
 tb_test_digital_side
-    ├─ test_digital_side : test_digital_side (needs intergation TB?)
+    ├─ test_digital_side : test_digital_side (TB in works)
+    (**** MATRIX INPUTS SEEM DISCONECTED***)
         │   ├─ counter : counter_re (*)
         │   ├─ counter : counter_re (*)
         │   ├─ xor18 : xy_invert_logic (*)
