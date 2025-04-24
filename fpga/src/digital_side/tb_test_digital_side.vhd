@@ -108,7 +108,11 @@ begin
         clk_25_in <= '0';
         wait for 10 ns;
         sys_clk <= '1';
+        wait for 10 ns;
+        sys_clk <= '0';
         clk_25_in <= '1';
+        wait for 10 ns;
+        sys_clk <= '1';
         wait for 10 ns;
     end process clk_process;
 
