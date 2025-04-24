@@ -22,72 +22,85 @@ entity tb_test_digital_side is
 end tb_test_digital_side;
 
 architecture behavior of tb_test_digital_side is
-    component test_digital_side is
-        port ( 
-            sys_clk: in std_logic;
-            clk_25_in: in std_logic;
-            rst: in std_logic;
-            RBG_out: out std_logic_vector(23 downto 0);
-            matrix_in_addr: in std_logic_vector(5 downto 0);
-            matrix_load: in STD_LOGIC;
-            clk_x_out  : out STD_LOGIC;
-            clk_y_out  : out STD_LOGIC
-        );
-    end component;
+--    component digital_side is
+--        port ( 
+--            sys_clk: in std_logic;
+--            clk_25_in: in std_logic;
+--            rst: in std_logic;
+--            RBG_out: out std_logic_vector(23 downto 0);
+--            matrix_in_addr: in std_logic_vector(5 downto 0);
+--            matrix_load: in STD_LOGIC;
+--            clk_x_out  : out STD_LOGIC;
+--            clk_y_out  : out STD_LOGIC
+--        );
+--    end component;
     
-    component write_file_ex is
-       port (
-            clk    : in  std_logic;   
-            hs    : in  std_logic;   
-            vs    : in  std_logic;   
-            r    : in  std_logic_vector(7 downto 0);  
-            g    : in  std_logic_vector(7 downto 0);   
-            b    : in  std_logic_vector(7 downto 0)   
+--    component write_file_ex is
+--       port (
+--            clk    : in  std_logic;   
+--            hs    : in  std_logic;   
+--            vs    : in  std_logic;   
+--            r    : in  std_logic_vector(7 downto 0);  
+--            g    : in  std_logic_vector(7 downto 0);   
+--            b    : in  std_logic_vector(7 downto 0)   
     
-        );
-    end component;
+--        );
+--    end component;
 
     signal sys_clk: std_logic := '0';
     signal clk_25_in: std_logic := '0';
     signal rst: std_logic := '0';
-    signal RBG_out: std_logic_vector(23 downto 0);
+    signal YCRCB: std_logic_vector(23 downto 0);
     signal RBG: std_logic_vector(23 downto 0);
     signal matrix_in_addr:  std_logic_vector(5 downto 0);
-    signal matrix_in_mux:  std_logic_vector(5 downto 0);
     signal matrix_load:  STD_LOGIC;
     signal matrix_latch: STD_LOGIC;
-    signal matrix_cs:  std_logic_vector(3 downto 0);
-    signal clk_x_out: std_logic := '0';
-    signal clk_Y_out: std_logic := '0';
-    
+    signal matrix_mask_in :  std_logic_vector(63 downto 0); --controls which inputs are routed to a selected output
+    signal invert_matrix  :  std_logic_vector(63 downto 0) := (others => '0'); --inverts a matrix input globaly
+    signal h_sync: std_logic := '0';
+    signal v_sync: std_logic := '0';
+    signal vid_span       : std_logic_vector(7 downto 0);
   
 
 begin
-    RBG<= RBG_out;
+    RBG<= YCRCB;
+    
+   vga_trimming_signals : entity work.vga_trimming_signals
+    port map
+    (
+      px_clk => clk_25_in,
+      reset => '0',
+      mode_select => '0',
+      h_sync    => h_sync,
+      v_sync    => v_sync
+    );
 
-    DUT: test_digital_side
+    DUT: entity work.digital_side
         port map (
             sys_clk => sys_clk,
-            clk_25_in => clk_25_in,
+            h_sync => h_sync,
+            v_sync => v_sync,
+            pix_clk => clk_25_in,
             rst => rst,
-            RBG_out => RBG_out,
+            YCRCB => YCRCB,
             matrix_in_addr => matrix_in_addr,
             matrix_load => matrix_load,
-            clk_x_out => clk_x_out,
-            clk_Y_out => clk_Y_out
+            matrix_mask_in => matrix_mask_in,
+            invert_matrix => invert_matrix,
+            vid_span => vid_span
         );
         
-        -- logging
-    logger : write_file_ex
-        port map (
-            clk  => clk_25_in,
-            hs   => clk_x_out,   
-            vs   => clk_y_out,  
-            r    => RBG(7 downto 0),
-            g    => RBG(15 downto 8),
-            b    => RBG(23 downto 16)
+--        -- logging
+--    logger : write_file_ex
+--        port map (
+--            clk  => clk_25_in,
+--            hs   => clk_x_out,   
+--            vs   => clk_y_out,  
+--            r    => RBG(7 downto 0),
+--            g    => RBG(15 downto 8),
+--            b    => RBG(23 downto 16)
             
-        );
+--        );
 
     clk_process: process
     begin
@@ -107,7 +120,6 @@ begin
         rst <= '1';
         matrix_load <= '0';
         matrix_latch <= '0';
-        matrix_cs <= "0000";
         wait for 100 ns;
         rst <= '0';
         wait for 100 ns;
@@ -115,8 +127,7 @@ begin
         
         ---------------------------------------------------------MUX WR COMAND -- 
         matrix_in_addr <= std_logic_vector(to_unsigned(17, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(5, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
@@ -124,10 +135,9 @@ begin
         matrix_load <= '0';
         matrix_latch <= '0';
         ---------------------------------------------------------
-        ---------------------------------------------------------MUX WR COMAND -- 
+--        ---------------------------------------------------------MUX WR COMAND -- 
         matrix_in_addr <=std_logic_vector(to_unsigned(6, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(16, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
@@ -137,8 +147,7 @@ begin
         ---------------------------------------------------------
         ---------------------------------------------------------
         matrix_in_addr <= std_logic_vector(to_unsigned(43, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(6, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
@@ -148,8 +157,7 @@ begin
         ---------------------------------------------------------
                 ---------------------------------------------------------
         matrix_in_addr <= std_logic_vector(to_unsigned(46, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(16, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
@@ -158,8 +166,7 @@ begin
         matrix_latch <= '0';
         ---------------------------------------------------------
         matrix_in_addr <= std_logic_vector(to_unsigned(30, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(3, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
@@ -169,8 +176,7 @@ begin
         ---------------------------------------------------------
         ---------------------------------------------------------
         matrix_in_addr <= std_logic_vector(to_unsigned(3, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(6, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
@@ -180,8 +186,7 @@ begin
         ---------------------------------------------------------
                 ---------------------------------------------------------
         matrix_in_addr <= std_logic_vector(to_unsigned(40, 6)); -- this is the output
-        matrix_in_mux  <= std_logic_vector(to_unsigned(33, 6)); -- ithis is the input
-        matrix_cs <= "0001";   
+        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
         wait for 50 ns;
         matrix_load <= '1';
         matrix_latch <= '1';
