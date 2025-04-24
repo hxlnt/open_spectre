@@ -47,7 +47,7 @@ tb_test_digital_side
                 │   ├─ mux2_1 : mux4
                 │   ├─ mux2_1 : mux5
                 │   ├─ mux2_1 : mux6
-    ├─ write_file_ex : write_file_ex (simulation only)
+    ├─ write_file_ex : write_file_ex (* simulation only)
 -------------------------------------------------------------
 </pre>
 <pre>
