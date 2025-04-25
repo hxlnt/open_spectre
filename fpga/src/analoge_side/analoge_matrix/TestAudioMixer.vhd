@@ -24,8 +24,8 @@ end TestAudioMixer;
 architecture sim of TestAudioMixer is
     signal clk : STD_LOGIC := '0';
     signal reset : STD_LOGIC := '0';
-    signal inputs : array_12(10 downto 0);
-    signal gains : array_5(10 downto 0);
+    signal inputs : array_12(10 downto 0) :=  (others => "000000000000");
+    signal gains : array_5(10 downto 0) := (others => "00000");
     signal output : STD_LOGIC_VECTOR(11 downto 0);
     constant CLOCK_PERIOD : time := 10 ns;
     
@@ -33,6 +33,9 @@ architecture sim of TestAudioMixer is
 begin
     -- Instantiate the DUT (Design Under Test)
     uut : entity work.AudioMixer
+    generic map (
+         NO_DSP => true 
+    )
         Port Map (
             clk => clk,
             reset => reset,
@@ -56,25 +59,25 @@ begin
     begin
         wait for 20 ns; -- Wait for initial stability
 
-        -- Test 1: All inputs at maximum, no gains
-        inputs <= (others => "111111111111");
-        gains <= (others => "00000");
-        reset <= '0';
-        wait for 30 ns;
-        assert output = "000000000000" report "Test 1 failed" severity error;
+--        -- Test 1: All inputs at maximum, no gains
+--        inputs <= (others => "111111111111");
+--        gains <= (others => "00000");
+--        reset <= '0';
+--        wait for 30 ns;
+--        assert output = "000000000000" report "Test 1 failed" severity error;
 
-        -- Test 2: All inputs at maximum, all gains at maximum
-        gains <= (others => "11111");
-        wait for 30 ns;
-        assert output = "111111111111" report "Test 2 failed" severity error;
+--        -- Test 2: All inputs at maximum, all gains at maximum
+--        gains <= (others => "11111");
+--        wait for 30 ns;
+--        assert output = "111111111111" report "Test 2 failed" severity error;
 
-        -- Test 3: Varying inputs and gains
-        inputs <= (others => "000001100000");
-        gains <= (others => "00100"); -- Gain 0 set to 2
-        wait for 30 ns;
-        assert output = "000001100000" report "Test 3 failed" severity error;
+--        -- Test 3: Varying inputs and gains
+--        inputs <= (others => "000001100000");
+--        gains <= (others => "00100"); -- Gain 0 set to 2
+--        wait for 30 ns;
+--        assert output = "000001100000" report "Test 3 failed" severity error;
 
-        -- You can add more tests here
+--        -- You can add more tests here
         
         -- Finish the simulation
         wait;

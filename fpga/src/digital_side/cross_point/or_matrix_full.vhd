@@ -37,7 +37,7 @@ entity or_matrix_full is
            mask : in STD_LOGIC_VECTOR (63 downto 0);
            mask_en : in std_logic;
            mask_addr : in STD_LOGIC_VECTOR (5 downto 0);
-           output : out STD_LOGIC_VECTOR (63 downto 0));
+           output : out STD_LOGIC_VECTOR (63 downto 0) := (others => '0'));
 end or_matrix_full;
 
 architecture Behavioral of or_matrix_full is

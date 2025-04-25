@@ -15,28 +15,21 @@
 -- created by   :   RD Jordan
 -- Create Date: 30.03.2023 17:52:29
 
--- Module Name: test_digital_side - Behavioral
+-- Module Name: digital_side - Behavioral
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.math_real.all;
 use ieee.numeric_std.all;
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
-entity test_digital_side is
+entity digital_side is
   port
   (
     sys_clk   : in std_logic;
     h_sync      : in std_logic; -- Hsync
     v_sync       : in std_logic; -- Vsync
-    pix_clk : in std_logic; -- pixel clk
+    pix_clk : in std_logic; -- pixel clk (is actualy enables on every pixel clock)
     rst       : in std_logic;
     YCRCB   : out std_logic_vector (23 downto 0);
 
@@ -45,42 +38,39 @@ entity test_digital_side is
     matrix_load    : in std_logic;
     matrix_mask_in : in std_logic_vector(63 downto 0); --controls which inputs are routed to a selected output
     invert_matrix  : in std_logic_vector(63 downto 0); --inverts a matrix input globaly
+    ext_vid_in     : in std_logic_vector(7 downto 0);
     vid_span       : in std_logic_vector(7 downto 0);
 
-    clk_x_out : out std_logic;
-    clk_y_out : out std_logic;
-    video_on  : out std_logic;
-
     -- inputs form analoge side
-    osc1_sqr : in std_logic;
-    osc2_sqr : in std_logic;
-    random1  : in std_logic;
-    random2  : in std_logic;
-    audio_T  : in std_logic;
-    audio_B  : in std_logic;
-    extinput : in std_logic;
+    osc1_sqr : in std_logic :='0';
+    osc2_sqr : in std_logic :='0';
+    random1  : in std_logic :='0';
+    random2  : in std_logic :='0';
+    audio_T  : in std_logic :='0';
+    audio_B  : in std_logic :='0';
+    extinput : in std_logic :='0';
    -- outputs to analoge side
     shape_a_analog : out std_logic_vector(7 downto 0);
     shape_b_analog : out std_logic_vector(7 downto 0);
     acm_out1_o : out std_logic;
     acm_out2_o : out std_logic
   );
-end test_digital_side;
+end digital_side;
 
-architecture Behavioral of test_digital_side is
+architecture Behavioral of digital_side is
   --Global Signals
 --  signal clk_x : std_logic;
 --  signal clk_y : std_logic;
   --Matrix Out to module in
-  signal inv_in           : std_logic_vector(3 downto 0);
-  signal xy_inv_in        : std_logic_vector(17 downto 0);
+  signal inv_in           : std_logic_vector(3 downto 0) := (others => '0');
+  signal xy_inv_in        : std_logic_vector(17 downto 0) := (others => '0');
   signal delay_in         : std_logic;
   signal edge_detector_in : std_logic;
   signal colour_swap      : std_logic;
-  signal luma_in1         : std_logic_vector(3 downto 0);
-  signal luma_in2         : std_logic_vector(3 downto 0);
-  signal overlay_gate1 : std_logic_vector(3 downto 0);
-  signal overlay_gate2 : std_logic_vector(3 downto 0);
+  signal luma_in1         : std_logic_vector(3 downto 0) := (others => '0');
+  signal luma_in2         : std_logic_vector(3 downto 0) := (others => '0');
+  signal overlay_gate1 : std_logic_vector(3 downto 0) := (others => '0');
+  signal overlay_gate2 : std_logic_vector(3 downto 0) := (others => '0');
   signal ff_in_a       : std_logic;
   signal ff_in_b       : std_logic;
   --Matrix Out to global
@@ -101,8 +91,8 @@ architecture Behavioral of test_digital_side is
   signal xy_count       : std_logic_vector(17 downto 0);
   signal xy_inv_out     : std_logic_vector(17 downto 0);
   signal delay_out      : std_logic;
-  signal delay_in_vec   : std_logic_vector(0 downto 0);
-  signal delay_out_vec  : std_logic_vector(0 downto 0);
+  signal delay_in_vec   : std_logic_vector(1 downto 0);
+  signal delay_out_vec  : std_logic_vector(1 downto 0);
   signal slow_cnt_6     : std_logic;
   signal slow_cnt_3     : std_logic;
   signal slow_cnt_1_5   : std_logic;
@@ -178,8 +168,6 @@ begin
   --pix_clk_i         <= pix_clk; -- needs to be in 100mhz domain!!!
   luma_vid_out   <= luma_out;
   chroma_vid_out <= chroma_mux_out;
-  clk_x_out      <= h_sync;
-  clk_y_out      <= v_sync;
 
 -- bring pix_clk and H/V syncs into 100mhz domain
 cdc_pix_100 : process(clk)  
@@ -200,17 +188,6 @@ cdc_pix_100 : process(clk)
     end if;
     
     end process;
-
-
-
---  vga_trimming_signals : entity work.vga_trimming_signals
---    port map
---    (
---      clk_25mhz => clk_25,
---      h_sync    => clk_x,
---      v_sync    => clk_y,
---      video_on  => video_on
---    );
 
   x_counter : entity work.counter_re
     port
@@ -258,6 +235,7 @@ cdc_pix_100 : process(clk)
     );
 
   not_overlay_gate2 <= not overlay_gate2;
+  
   overlay_gates : entity work.nand4
     port
     map (
@@ -281,7 +259,7 @@ cdc_pix_100 : process(clk)
     output => edge_detector_out
     );
 
-  delay_in_vec(0) <= delay_in;
+  delay_in_vec <= '0' & delay_in;
   delay_out       <= delay_out_vec(0);
   
   delay_800 : entity work.delay_800us -- need another solution to this even at 25mhz enables for write we would need a fifo of lenght of 2_000_000!!
@@ -368,7 +346,7 @@ cdc_pix_100 : process(clk)
   --      end process;
   ----------------------------------------asignments
   -- MAtrix IN
-  matrix_in(17 downto 0)  <= xy_inv_out; -- the 0 at the start is a place holder for no pins
+  matrix_in(17 downto 0)  <= xy_inv_out; 
   matrix_in(18)           <= slow_cnt_6;
   matrix_in(19)           <= slow_cnt_3;
   matrix_in(20)           <= slow_cnt_1_5;
@@ -394,6 +372,7 @@ cdc_pix_100 : process(clk)
   matrix_in(56)           <= audio_B  ; -- 
   matrix_in(57)           <= extinput ; -- 
 
+  matrix_in(63)           <= '1' ; -- 1 used to set all outputs in simulation
   --matrix in extras add later
   -- special x/y counter 1?
   -- celular automita
@@ -461,12 +440,13 @@ cdc_pix_100 : process(clk)
   Cb <= chroma_vid_out(2 downto 0) & "00000";
   YCRCB <= Y & Cr & Cb;
   -- -- Luma feedback path to comparitor in
-  LUMA_FEEDBACK : process (clk) is -- 2 clock delay in feedback path,lukely needs to be much longer 
-  begin
-    if rising_edge(clk) then
-      luma_fb     <= (luma_vid_out);
-      comp_luma_i <= luma_fb & "0000";
-    end if;
-  end process;
+  comp_luma_i <= ext_vid_in;
+--  LUMA_FEEDBACK : process (clk) is -- 2 clock delay in feedback path,lukely needs to be much longer 
+--  begin
+--    if rising_edge(clk) then
+--      luma_fb     <= (luma_vid_out);
+--      comp_luma_i <= luma_fb & "0000";
+--    end if;
+--  end process;
 
 end Behavioral;

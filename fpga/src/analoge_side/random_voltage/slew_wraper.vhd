@@ -53,7 +53,7 @@ begin
    slew_fast : entity work.moving_average 
        generic map (
         G_NBIT => 10,
-        G_AVG_LEN_LOG => 2
+        G_MAX_DELTA => 50
        )
        port map (
         i_clk => clk,
@@ -68,7 +68,7 @@ begin
    slew_med : entity work.moving_average 
        generic map (
         G_NBIT => 10,
-        G_AVG_LEN_LOG => 4
+        G_MAX_DELTA => 25
        )
        port map (
         i_clk => clk,
@@ -83,7 +83,7 @@ begin
    slew_slow : entity work.moving_average 
        generic map (
         G_NBIT => 10,
-        G_AVG_LEN_LOG => 6
+        G_MAX_DELTA => 10
        )
        port map (
         i_clk => clk,
@@ -98,7 +98,7 @@ begin
    slew_snail : entity work.moving_average  
        generic map (
         G_NBIT => 10,
-        G_AVG_LEN_LOG => 8
+        G_MAX_DELTA => 2
        )
        port map (
         i_clk => clk,
