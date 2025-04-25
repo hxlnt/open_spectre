@@ -5,7 +5,7 @@ Design Hierarchy
 Hierarchy of tb_test_digital_side is:
     
 **** INDIVIDUAL MODULES PASSED 100% ****
-tb_test_digital_side (tested and apears fully working)
+tb_test_digital_side (tested and appears fully working)
     ├─ test_digital_side : test_digital_side (*)
         │   ├─ counter : counter_re (*)
         │   ├─ counter : counter_re (*)
