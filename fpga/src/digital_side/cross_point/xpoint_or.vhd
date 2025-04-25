@@ -31,7 +31,7 @@ use ieee.std_logic_misc.all;
 --use UNISIM.VComponents.all;
 
 entity xpoint_or is
-    Port ( input : in STD_LOGIC_VECTOR (63 downto 0);
+    Port ( input : in STD_LOGIC_VECTOR (63 downto 0) := (others => '0');
            mask : in STD_LOGIC_VECTOR (63 downto 0);
            output : out STD_LOGIC);
 end xpoint_or;

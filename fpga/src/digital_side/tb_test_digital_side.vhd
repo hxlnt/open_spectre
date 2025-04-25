@@ -59,9 +59,18 @@ architecture behavior of tb_test_digital_side is
     signal invert_matrix  :  std_logic_vector(63 downto 0) := (others => '0'); --inverts a matrix input globaly
     signal h_sync: std_logic := '0';
     signal v_sync: std_logic := '0';
-    signal vid_span       : std_logic_vector(7 downto 0);
-  
-
+    signal ext_vid_in       : std_logic_vector(7 downto 0);
+    signal vid_span       : std_logic_vector(7 downto 0) := x"ff";
+    
+    function shift_left_64(index : integer) return std_logic_vector is
+        variable result : unsigned(63 downto 0) := (others => '0');
+    begin
+        if index >= 0 and index < 64 then
+            result(index) := '1';
+        end if;
+        return std_logic_vector(result);
+    end function;
+    
 begin
     RBG<= YCRCB;
     
@@ -87,6 +96,7 @@ begin
             matrix_load => matrix_load,
             matrix_mask_in => matrix_mask_in,
             invert_matrix => invert_matrix,
+            ext_vid_in => ext_vid_in,
             vid_span => vid_span
         );
         
@@ -127,78 +137,67 @@ begin
         wait for 100 ns;
         rst <= '0';
         wait for 100 ns;
+        
+        for i in 0 to 63 loop
+            matrix_in_addr <= std_logic_vector(to_unsigned(i, 6)); -- this is the output
+            matrix_mask_in <= shift_left_64(63);
+            wait for 50 ns;
+            matrix_load <= '1';
+            matrix_latch <= '1';
+            wait for 50 ns;
+            matrix_load <= '0';
+            matrix_latch <= '0'; 
+        end loop;
+        
         -- Test case 1
+        wait for 500 ns;
+        --test the video input comparitor
+        for i in 0 to 254 loop
+           ext_vid_in <= std_logic_vector(to_unsigned(i, 8));
+           wait for 50 ns;
+        end loop;
         
-        ---------------------------------------------------------MUX WR COMAND -- 
-        matrix_in_addr <= std_logic_vector(to_unsigned(17, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
---        ---------------------------------------------------------MUX WR COMAND -- 
-        matrix_in_addr <=std_logic_vector(to_unsigned(6, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
-        ---------------------------------------------------------
-        matrix_in_addr <= std_logic_vector(to_unsigned(43, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
-                ---------------------------------------------------------
-        matrix_in_addr <= std_logic_vector(to_unsigned(46, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
-        matrix_in_addr <= std_logic_vector(to_unsigned(30, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
-        ---------------------------------------------------------
-        matrix_in_addr <= std_logic_vector(to_unsigned(3, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
-                ---------------------------------------------------------
-        matrix_in_addr <= std_logic_vector(to_unsigned(40, 6)); -- this is the output
-        matrix_mask_in <= std_logic_vector(to_unsigned(1, 64));
-        wait for 50 ns;
-        matrix_load <= '1';
-        matrix_latch <= '1';
-        wait for 50 ns;
-        matrix_load <= '0';
-        matrix_latch <= '0';
-        ---------------------------------------------------------
         
+        ------------------------------------------------------- test flip flops (masked by vertical balnking)
+        matrix_in_addr <= std_logic_vector(to_unsigned(32, 6)); 
+        matrix_mask_in <= shift_left_64(1);
+        wait for 50 ns;
+        matrix_load <= '1';
+        matrix_latch <= '1';
+        wait for 50 ns;
+        matrix_load <= '0';
+        matrix_latch <= '0';
+        matrix_in_addr <= std_logic_vector(to_unsigned(33, 6)); 
+        matrix_mask_in <= shift_left_64(2);
+        wait for 50 ns;
+        matrix_load <= '1';
+        matrix_latch <= '1';
+        wait for 50 ns;
+        matrix_load <= '0';
+        matrix_latch <= '0';
+        
+        ------------------------------------------------------- test edge detector
+        matrix_in_addr <= std_logic_vector(to_unsigned(30, 6)); 
+        matrix_mask_in <= shift_left_64(1);
+        wait for 50 ns;
+        matrix_load <= '1';
+        matrix_latch <= '1';
+        wait for 50 ns;
+        matrix_load <= '0';
+        matrix_latch <= '0';
+
+        ------------------------------------------------------- test edge detector, invertor and delay, and overlay gates
+        for i in 18 to 31 loop
+            matrix_in_addr <= std_logic_vector(to_unsigned(i, 6)); -- this is the output
+            matrix_mask_in <= shift_left_64(1);
+            wait for 50 ns;
+            matrix_load <= '1';
+            matrix_latch <= '1';
+            wait for 50 ns;
+            matrix_load <= '0';
+            matrix_latch <= '0'; 
+        end loop;
+
 
 
         -- End simulation

@@ -38,6 +38,7 @@ entity digital_side is
     matrix_load    : in std_logic;
     matrix_mask_in : in std_logic_vector(63 downto 0); --controls which inputs are routed to a selected output
     invert_matrix  : in std_logic_vector(63 downto 0); --inverts a matrix input globaly
+    ext_vid_in     : in std_logic_vector(7 downto 0);
     vid_span       : in std_logic_vector(7 downto 0);
 
     -- inputs form analoge side
@@ -61,15 +62,15 @@ architecture Behavioral of digital_side is
 --  signal clk_x : std_logic;
 --  signal clk_y : std_logic;
   --Matrix Out to module in
-  signal inv_in           : std_logic_vector(3 downto 0);
-  signal xy_inv_in        : std_logic_vector(17 downto 0);
+  signal inv_in           : std_logic_vector(3 downto 0) := (others => '0');
+  signal xy_inv_in        : std_logic_vector(17 downto 0) := (others => '0');
   signal delay_in         : std_logic;
   signal edge_detector_in : std_logic;
   signal colour_swap      : std_logic;
-  signal luma_in1         : std_logic_vector(3 downto 0);
-  signal luma_in2         : std_logic_vector(3 downto 0);
-  signal overlay_gate1 : std_logic_vector(3 downto 0);
-  signal overlay_gate2 : std_logic_vector(3 downto 0);
+  signal luma_in1         : std_logic_vector(3 downto 0) := (others => '0');
+  signal luma_in2         : std_logic_vector(3 downto 0) := (others => '0');
+  signal overlay_gate1 : std_logic_vector(3 downto 0) := (others => '0');
+  signal overlay_gate2 : std_logic_vector(3 downto 0) := (others => '0');
   signal ff_in_a       : std_logic;
   signal ff_in_b       : std_logic;
   --Matrix Out to global
@@ -345,7 +346,7 @@ cdc_pix_100 : process(clk)
   --      end process;
   ----------------------------------------asignments
   -- MAtrix IN
-  matrix_in(17 downto 0)  <= xy_inv_out; -- the 0 at the start is a place holder for no pins
+  matrix_in(17 downto 0)  <= xy_inv_out; 
   matrix_in(18)           <= slow_cnt_6;
   matrix_in(19)           <= slow_cnt_3;
   matrix_in(20)           <= slow_cnt_1_5;
@@ -371,6 +372,7 @@ cdc_pix_100 : process(clk)
   matrix_in(56)           <= audio_B  ; -- 
   matrix_in(57)           <= extinput ; -- 
 
+  matrix_in(63)           <= '1' ; -- 1 used to set all outputs in simulation
   --matrix in extras add later
   -- special x/y counter 1?
   -- celular automita
@@ -438,12 +440,13 @@ cdc_pix_100 : process(clk)
   Cb <= chroma_vid_out(2 downto 0) & "00000";
   YCRCB <= Y & Cr & Cb;
   -- -- Luma feedback path to comparitor in
-  LUMA_FEEDBACK : process (clk) is -- 2 clock delay in feedback path,lukely needs to be much longer 
-  begin
-    if rising_edge(clk) then
-      luma_fb     <= (luma_vid_out);
-      comp_luma_i <= luma_fb & "0000";
-    end if;
-  end process;
+  comp_luma_i <= ext_vid_in;
+--  LUMA_FEEDBACK : process (clk) is -- 2 clock delay in feedback path,lukely needs to be much longer 
+--  begin
+--    if rising_edge(clk) then
+--      luma_fb     <= (luma_vid_out);
+--      comp_luma_i <= luma_fb & "0000";
+--    end if;
+--  end process;
 
 end Behavioral;
