@@ -4,11 +4,9 @@ Design Hierarchy
 -------------------------------------------------------------
 Hierarchy of tb_test_digital_side is:
     
-**** INDIVIDUAL MODULES PASSED 95% ****
-    
-tb_test_digital_side
-    ├─ test_digital_side : test_digital_side (TB in works)
-    (**** MATRIX INPUTS SEEM DISCONECTED***)
+**** INDIVIDUAL MODULES PASSED 100% ****
+tb_test_digital_side (tested and apears fully working)
+    ├─ test_digital_side : test_digital_side (*)
         │   ├─ counter : counter_re (*)
         │   ├─ counter : counter_re (*)
         │   ├─ xor18 : xy_invert_logic (*)
@@ -49,7 +47,7 @@ tb_test_digital_side
                 │   ├─ mux2_1 : mux5
                 │   ├─ mux2_1 : mux6
     ├─ write_file_ex : write_file_ex (* simulation only)
--------------------------------------------------------------
+-------------------------------------------------------------    
 </pre>
 <pre>
 -------------------------------------------------------------
