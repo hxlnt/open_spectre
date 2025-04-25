@@ -29,7 +29,7 @@ entity digital_side is
     sys_clk   : in std_logic;
     h_sync      : in std_logic; -- Hsync
     v_sync       : in std_logic; -- Vsync
-    pix_clk : in std_logic; -- pixel clk
+    pix_clk : in std_logic; -- pixel clk (is actualy enables on every pixel clock)
     rst       : in std_logic;
     YCRCB   : out std_logic_vector (23 downto 0);
 
