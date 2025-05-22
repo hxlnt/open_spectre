@@ -20,7 +20,7 @@ use ieee.std_logic_1164.all;
 entity shift_sipo is
 
   port (
-    Clock, SinA, SinB, rst : in std_logic;
+    Clock,shift, SinA, SinB, rst : in std_logic;
 
     Pout : out std_logic_vector(7 downto 0));
 
@@ -37,13 +37,15 @@ begin
 
   begin
 
-    Sin <= SinA NAND SinB;
-
     if (Clock'event and Clock = '1') then
+    Sin <= SinA NAND SinB;
+    
     if rst = '1' then
         temp <= "10000110";
     else
-      temp <= temp(6 downto 0) & Sin;
+        if shift = '1' then
+            temp <= temp(6 downto 0) & Sin;
+        end if;
 
     end if;
 

@@ -52,7 +52,7 @@ begin
     -- N = 3
     -- Feedback polynomial : x^3 + x^2 + 1 
     -- total sequences (maximum) : 2^3 - 1 = 7
-    feedback_value <= r_reg(3) xor r_reg(2) xor r_reg(0);
+--    feedback_value <= r_reg(3) xor r_reg(2) xor r_reg(0);
     
     -- N = 4
     -- feedback_value <= r_reg(4) xor r_reg(3) xor r_reg(0);
@@ -61,7 +61,7 @@ begin
     -- feedback_value <= r_reg(5) xor r_reg(3) xor r_reg(0);
     
     -- N = 9 
-    -- feedback_value <= r_reg(9) xor r_reg(5) xor r_reg(0);
+     feedback_value <= r_reg(9) xor r_reg(5) xor r_reg(0);
     
     r_next <= feedback_value & r_reg(N downto 1);
     q <= r_reg;

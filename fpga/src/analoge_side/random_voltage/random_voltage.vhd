@@ -41,11 +41,24 @@ architecture Behavioral of random_voltage is
   signal recycle_d : std_logic := '0';
   signal sipo_b_rst : std_logic := '0';
   signal recycle_re,recycle_re_d,recycle_re_d2,recycle_re_d3 : std_logic := '0'; -- 
-  signal recycle_stretched: std_logic := '0'; -- 
+  signal recycle_stretched: std_logic := '0'; 
+  signal lfsr: std_logic_vector(5 downto 0);
 
 begin
 
-  mux_in <= extra_in & noise_1_to_slew(0) & noise_freq(2 downto 0) & extra_in & noise_1_to_slew(1) & '1';
+--  mux_in <= extra_in & noise_1_to_slew(0) & noise_freq(2 downto 0) & extra_in & noise_1_to_slew(1) & '1';
+  mux_in <= lfsr(5) & noise_1_to_slew(0) & lfsr(2 downto 0) & lfsr(4) & noise_1_to_slew(1) & '1';
+
+  
+  lfsr_rnd : entity work.rand_num
+  generic map(
+  N := 6
+  )
+    port map(
+    clk => Clock,
+    reset => rst,
+    q => lfsr
+    );
 
   sipo_clk <= cnt_match;
   
@@ -69,7 +82,8 @@ begin
   
   sipo_1 : entity work.shift_sipo
     port map(
-      Clock => sipo_clk, 
+      Clock => Clock, 
+      shift => sipo_clk,
       SinA => Sin, 
       SinB => Sin, 
       rst => rst,
@@ -83,7 +97,8 @@ begin
 
   sipo_2 : entity work.shift_sipo
       port map(
-        Clock => sipo_clk, 
+        Clock => Clock, 
+        shift => sipo_clk,
         SinA => spio_out_1(7), 
         SinB => spio_out_1(7), 
         rst => '0',
