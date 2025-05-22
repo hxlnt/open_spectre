@@ -33,7 +33,7 @@ architecture Behavioral of SinWaveGenerator is
     signal counter, counterB : STD_LOGIC_VECTOR(13 downto 0) := (others => '0');
     signal phase_accumulator,phase_accumulatorB, scaled_freq: STD_LOGIC_VECTOR(13 downto 0) := (others => '0');  -- Use 12 bits for phase accumulator
     signal rom_address, rom_address_dist : integer range 0 to 180;
-    signal sine_table, sine_table_dist : STD_LOGIC_VECTOR(11 downto 0);
+    signal sine_table, sine_table_dist,sin_table_xmod : STD_LOGIC_VECTOR(11 downto 0);
     signal sine_table_summed, sine_table_summed_limited : STD_LOGIC_VECTOR(12 downto 0);
     signal square_i : STD_LOGIC := '0';
     signal sync_edge : STD_LOGIC := '0';
@@ -475,14 +475,24 @@ begin
     -- Create the distortion sinwave
     sine_table_dist <= sine_rom(rom_address_dist); -- needs to have a amplitude control to mix the level
     
-    process(clk)
-      variable mult_result : unsigned(19 downto 0); -- 12+8 bits = 20
-    begin
-      if rising_edge(clk) then
-        mult_result := unsigned(sine_table_dist) * unsigned(dist_level);  -- 12-bit × 8-bit = 20-bit
-        attenuated_out <= std_logic_vector(mult_result(19 downto 8));  -- divide by 256 (shift right 8)
-      end if;
-    end process;
+process(clk) -- modulate the sinwave by the attenuated other sinwave
+  variable mult_resultA : unsigned(19 downto 0); -- 12+8
+  variable mult_resultB : unsigned(19 downto 0); -- 12+8
+  variable atten_val    : unsigned(11 downto 0);
+begin
+  if rising_edge(clk) then
+    -- Step 1: attenuate distortion
+    mult_resultA := unsigned(sine_table_dist) * unsigned(dist_level);  -- 12 x 8
+    atten_val := mult_resultA(19 downto 8);  -- keep 12 bits
+
+    -- Save result
+    attenuated_out <= std_logic_vector(atten_val);
+
+    -- Step 2: use it to attenuate main sine
+    mult_resultB := unsigned(sine_table) * unsigned(atten_val);
+    sin_table_xmod <= std_logic_vector(mult_resultB(19 downto 8));
+  end if;
+end process;
     
     process(clk) 
         begin
@@ -499,7 +509,7 @@ begin
         
         end process;
 
-    sin_out <= sine_table_summed_limited(11 downto 0);
+    sin_out <= sin_table_xmod;
     square_out <= square_i;
 
 end Behavioral;
