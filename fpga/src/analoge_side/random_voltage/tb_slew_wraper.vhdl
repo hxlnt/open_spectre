@@ -64,6 +64,12 @@ begin
         input_sig <= std_logic_vector(to_unsigned(i * 32, 10));
         wait for CLK_PERIOD;
       end loop;
+      wait for CLK_PERIOD * 5;
+      for i in 0 to 31 loop
+        input_sig <= std_logic_vector(to_unsigned(1023-(i * 32), 10));
+        wait for CLK_PERIOD;
+      end loop;
+      wait for CLK_PERIOD * 5;
     end loop;
 
     -- Test invalid selector
