@@ -10,7 +10,6 @@ architecture sim of mixer_11_1_tb is
 
   -- DUT signals
   signal clk       : std_logic := '0';
-  signal inputs    : std_logic_vector(11 downto 0);
   signal input_0   : std_logic_vector(11 downto 0);
   signal input_1   : std_logic_vector(11 downto 0);
   signal input_2   : std_logic_vector(11 downto 0);

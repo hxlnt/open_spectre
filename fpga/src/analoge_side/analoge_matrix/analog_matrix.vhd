@@ -25,212 +25,220 @@ entity analog_matrix is
          clk : in STD_LOGIC;
          reset : in STD_LOGIC;
          mixer_inputs : in array_12(10 downto 0);
-         mixer_gains_0 : in array_5(10 downto 0);
-         mixer_gains_1 : in array_5(10 downto 0);
-         mixer_gains_2 : in array_5(10 downto 0);
-         mixer_gains_3 : in array_5(10 downto 0);
-         mixer_gains_4 : in array_5(10 downto 0);
-         mixer_gains_5 : in array_5(10 downto 0);
-         mixer_gains_6 : in array_5(10 downto 0);
-         mixer_gains_7 : in array_5(10 downto 0);
-         mixer_gains_8 : in array_5(10 downto 0);
-         mixer_gains_9 : in array_5(10 downto 0);
-         mixer_gains_10 : in array_5(10 downto 0);
-         mixer_gains_11 : in array_5(10 downto 0);
-         mixer_gains_12 : in array_5(10 downto 0);
-         mixer_gains_13 : in array_5(10 downto 0);
-         mixer_gains_14 : in array_5(10 downto 0);
-         mixer_gains_15 : in array_5(10 downto 0);
-         mixer_gains_16 : in array_5(10 downto 0);
-         mixer_gains_17 : in array_5(10 downto 0);
-         mixer_gains_18 : in array_5(10 downto 0);
-         mixer_gains_19 : in array_5(10 downto 0);
         outputs : out array_12(19 downto 0)  
     );
 end analog_matrix;
 
 architecture Behavioral of analog_matrix is
-    component AudioMixer
-        Port (
-            clk : in STD_LOGIC;
-            reset : in STD_LOGIC;
-            inputs : in array_12(10 downto 0);
-            gains : in array_5(10 downto 0);
-            output : out STD_LOGIC_VECTOR(11 downto 0)
-        );
-    end component;
 
+  signal input_0   : std_logic_vector(11 downto 0);
+  signal input_1   : std_logic_vector(11 downto 0);
+  signal input_2   : std_logic_vector(11 downto 0);
+  signal input_3   : std_logic_vector(11 downto 0);
+  signal input_4   : std_logic_vector(11 downto 0);
+  signal input_5   : std_logic_vector(11 downto 0);
+  signal input_6   : std_logic_vector(11 downto 0);
+  signal input_7   : std_logic_vector(11 downto 0);
+  signal input_8   : std_logic_vector(11 downto 0);
+  signal input_9   : std_logic_vector(11 downto 0);
+  signal input_10  : std_logic_vector(11 downto 0);
 
 begin
+    -- unpack input channels
+    input_0  <= mixer_inputs(0);
+    input_1  <= mixer_inputs(1);
+    input_2  <= mixer_inputs(2);
+    input_3  <= mixer_inputs(3);
+    input_4  <= mixer_inputs(4);
+    input_5  <= mixer_inputs(5);
+    input_6  <= mixer_inputs(6);
+    input_7  <= mixer_inputs(7);
+    input_8  <= mixer_inputs(8);
+    input_9  <= mixer_inputs(9);
+    input_10 <= mixer_inputs(10);
+
+
+
     -- Instantiate 10 instances of the AudioMixer module
-    Mixer0: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_0,
-        output => outputs(0)
-    );
-    
-    Mixer1: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_1,
-        output => outputs(1)
-    );
-    
-    Mixer2: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_2,
-        output => outputs(2)
-    );
-    
-    Mixer3: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_3,
-        output => outputs(3)
-    );
-    
-    Mixer4: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_4,
-        output => outputs(4)
-    );
-    
-    Mixer5: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_5,
-        output => outputs(5)
-    );
-    
-    Mixer6: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_6,
-        output => outputs(6)
-    );
-    
-    Mixer7: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_7,
-        output => outputs(7)
-    );
-    
-    Mixer8: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_8,
-        output => outputs(8)
-    );
-    
-    Mixer9: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_9,
-        output => outputs(9)
+    Mix0: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(0)
     );
 
-    Mixer10: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_10,
-        output => outputs(10)
+    Mix1: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(1)
     );
 
-    Mixer11: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_11,
-        output => outputs(11)
+    Mix2: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(2)
     );
 
-    Mixer12: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_12,
-        output => outputs(12)
+    Mix3: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(3)
     );
 
-    Mixer13: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_13,
-        output => outputs(13)
+    Mix4: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(4)
     );
 
-    Mixer14: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_14,
-        output => outputs(14)
+    Mix5: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(5)
     );
 
-    Mixer15: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_15,
-        output => outputs(15)
+    Mix6: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(6)
     );
 
-
-
-    Mixer16: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_16,
-        output => outputs(16)
+    Mix7: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(7)
     );
 
-
-    Mixer17: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_17,
-        output => outputs(17)
+    Mix8: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(8)
     );
 
-
-    Mixer18: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_18,
-        output => outputs(18)
+    Mix9: entity work.mixer_11_1 -- change to output name for clarity
+    port map (
+      clk       => clk,
+      input_0   => input_0,
+      input_1   => input_1,
+      input_2   => input_2,
+      input_3   => input_3,
+      input_4   => input_4,
+      input_5   => input_5,
+      input_6   => input_6,
+      input_7   => input_7,
+      input_8   => input_8,
+      input_9   => input_9,
+      input_10  => input_10,
+      mutes     => mutes,
+      mixed_out => outputs(9)
     );
-
-
-    Mixer19: AudioMixer port map (
-        clk => clk,
-        reset => reset,
-        inputs => mixer_inputs,
-        gains => mixer_gains_19,
-        output => outputs(19)
-    );
-
-
-
-
 
 
 end Behavioral;
