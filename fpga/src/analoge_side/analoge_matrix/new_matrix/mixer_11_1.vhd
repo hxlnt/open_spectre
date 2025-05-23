@@ -1,6 +1,6 @@
 -- VHDL 2008
 -- 11 input unity gain mixer with mutes, all ins and outs are 12-bit
--- 6 cycle pipeline dela
+-- 6 cycle pipeline delay
 
 library ieee;
 use ieee.std_logic_1164.all;
