@@ -477,37 +477,37 @@ begin
     
 process(clk) -- modulate the sinwave by the attenuated other sinwave
   variable mult_resultA : unsigned(19 downto 0); -- 12+8
-  variable mult_resultB : unsigned(19 downto 0); -- 12+8
+  variable mult_resultB : unsigned(23 downto 0); -- 12+8
   variable atten_val    : unsigned(11 downto 0);
 begin
   if rising_edge(clk) then
     -- Step 1: attenuate distortion
-    mult_resultA := unsigned(sine_table_dist) * unsigned(dist_level);  -- 12 x 8
+    mult_resultA := unsigned(sine_table_dist) * (unsigned(dist_level));  -- 12 x 8
     atten_val := mult_resultA(19 downto 8);  -- keep 12 bits
 
     -- Save result
     attenuated_out <= std_logic_vector(atten_val);
 
     -- Step 2: use it to attenuate main sine
-    mult_resultB := unsigned(sine_table) * unsigned(atten_val);
-    sin_table_xmod <= std_logic_vector(mult_resultB(19 downto 8));
+    mult_resultB := unsigned(sine_table) * (4095 - atten_val);
+    sin_table_xmod <= std_logic_vector(mult_resultB(23 downto 12));
   end if;
 end process;
     
-    process(clk) 
-        begin
-        if rising_edge(clk) then
-        sine_table_summed <= ('0'& sine_table) + ('0' & attenuated_out); 
+--    process(clk) 
+--        begin
+--        if rising_edge(clk) then
+--        sine_table_summed <= ('0'& sine_table) + ('0' & attenuated_out); 
 
-        if sine_table_summed(12) = '1' then
-            sine_table_summed_limited <= (others => '1');
-         else
-            sine_table_summed_limited <= sine_table_summed;
-         end if;
+--        if sine_table_summed(12) = '1' then
+--            sine_table_summed_limited <= (others => '1');
+--         else
+--            sine_table_summed_limited <= sine_table_summed;
+--         end if;
          
-          end if;
+--          end if;
         
-        end process;
+--        end process;
 
     sin_out <= sin_table_xmod;
     square_out <= square_i;
