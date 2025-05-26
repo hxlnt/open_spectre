@@ -13,6 +13,8 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
+
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -33,9 +35,10 @@ entity mixer_interface is
     rst      :in    STD_LOGIC;
     wr       :in    STD_LOGIC;
     out_addr     :in    integer;
-    ch_addr      :in    integer;
-    gain_in  :in    STD_LOGIC; -- 1= mute 0 = unmuted
-    mixer_inputs : in array_12(10 downto 0);
+--    ch_addr      :in    integer;
+    gain_in  :in    std_logic_vector(15 downto 0); -- 1= mute 0 = unmuted
+    gain_out  :out    std_logic_vector(15 downto 0); -- matrix state read out
+    mixer_inputs : in array_12(15 downto 0);
     outputs : out array_12(19 downto 0)  
 
   );
@@ -43,59 +46,19 @@ end mixer_interface;
 
 architecture Behavioral of mixer_interface is
 
-    signal mutes        : array_10(9 downto 0);
+    signal mutes        : array_16(19 downto 0);
+    signal ram_address        : std_logic_vector(7 downto 0); 
 
 begin
+
+ram_address <= std_logic_vector(to_unsigned(out_addr, 8));
 
 process (clk) is
 begin
     if rising_edge (clk) then
-        if wr = '1' then
-           case out_addr is
-            when 0 =>
-               mutes(ch_addr) <= gain_in;
-            when 1 =>
-               mutes(ch_addr) <= gain_in;
-            when 2 =>
-               mutes(ch_addr) <= gain_in;
-            when 3 =>
-               mutes(ch_addr) <= gain_in;
-            when 4 =>
-               mutes(ch_addr) <= gain_in;
-            when 5 =>
-               mutes(ch_addr) <= gain_in;
-            when 6 =>
-               mutes(ch_addr) <= gain_in;
-            when 7 =>
-               mutes(ch_addr) <= gain_in;
-            when 8 =>
-               mutes(ch_addr) <= gain_in;
-            when 9 =>
-               mutes(ch_addr) <= gain_in;
-            when 10 =>
-                mutes(ch_addr) <= gain_in;
-            when 11 =>
-                mutes(ch_addr) <= gain_in;
-            when 12 =>
-                mutes(ch_addr) <= gain_in;
-            when 13 =>
-                mutes(ch_addr) <= gain_in;
-            when 14 =>
-                mutes(ch_addr) <= gain_in;
-            when 15 =>
-                mutes(ch_addr) <= gain_in;
-            when 16 =>
-                mutes(ch_addr) <= gain_in;
-            when 17 =>
-                mutes(ch_addr) <= gain_in;
-            when 18 =>
-                mutes(ch_addr) <= gain_in;
-            when 19 =>
-                mutes(ch_addr) <= gain_in;
-            when others => -- 'U', 'X', '-', etc.
-                mutes(ch_addr) <= (others => '0');
-        end case;
-        
+        if wr = '1' then 
+          mutes(out_addr) <= gain_in;
+
         elsif rst = '1' then -- on reset all inputs are muted (all pins in matrix removed)
              mutes <= (others => (others => '1'));
        end if;
@@ -110,6 +73,15 @@ analog_matrix: entity work.analog_matrix
             mutes         => mutes,
             outputs       => outputs
        );
+       
+matrix_state_ram : entity work.RAM_16x20 -- holds the state of the analog matrix for reading back the pin state
+      port map ( clk => clk,
+           reset => rst,
+           write_enable => wr,
+           address => ram_address,
+           data_in => gain_in,
+           data_out => gain_out
+        );
 
 
 end Behavioral;
