@@ -63,7 +63,7 @@ tb_analog_side
         │   ├─ adder_12bit_nooverflow : gear_1_mix (*)
         │   ├─ adder_12bit_nooverflow : lantern_1_mix (*)
         │   ├─ adder_12bit_nooverflow : fizz_1_mix (*)
-        │   ├─ mixer_interface : analox_matrix (the bones are here, but without the pipelined DSP it isn't really working)
+        │   ├─ mixer_interface : analox_matrix (WIP no dsp, needs TB but looks close!)
                 │   ├─ analog_matrix : analog_matrix (*)
                         │   ├─ audiomixer : audiomixer (*)
                         │   ├─ audiomixer : audiomixer
