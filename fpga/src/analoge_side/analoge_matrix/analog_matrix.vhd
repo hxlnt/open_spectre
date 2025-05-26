@@ -43,10 +43,10 @@ architecture Behavioral of analog_matrix is
   signal input_9   : std_logic_vector(11 downto 0);
   signal input_10  : std_logic_vector(11 downto 0);
   signal input_11  : std_logic_vector(11 downto 0);
-  signal input_12  : std_logic_vector(11 downto 0);
-  signal input_13  : std_logic_vector(11 downto 0);
-  signal input_14  : std_logic_vector(11 downto 0);
-  signal input_15  : std_logic_vector(11 downto 0);
+  signal input_12  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_13  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_14  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_15  : std_logic_vector(11 downto 0) := (others => '0');
 
 begin
     -- unpack input channels
@@ -62,10 +62,10 @@ begin
     input_9  <= mixer_inputs(9);
     input_10 <= mixer_inputs(10);
     input_11 <= mixer_inputs(11);
-    input_12 <= mixer_inputs(12);
-    input_13 <= mixer_inputs(13);
-    input_14 <= mixer_inputs(14);
-    input_15 <= mixer_inputs(15);
+--    input_12 <= mixer_inputs(12); -- these 4 inputs are from the sliders, it would be easyer to get write directly tot he outputs or something like that rather then have the 4 extra mixer channels
+--    input_13 <= mixer_inputs(13); 
+--    input_14 <= mixer_inputs(14);
+--    input_15 <= mixer_inputs(15);
 
 
 
