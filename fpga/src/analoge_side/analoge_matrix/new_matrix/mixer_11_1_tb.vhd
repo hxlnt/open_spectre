@@ -20,8 +20,13 @@ architecture sim of mixer_11_1_tb is
   signal input_7   : std_logic_vector(11 downto 0);
   signal input_8   : std_logic_vector(11 downto 0);
   signal input_9   : std_logic_vector(11 downto 0);
-  signal input_10  : std_logic_vector(11 downto 0);
-  signal mutes     : std_logic_vector(10 downto 0);
+  signal input_10  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_11  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_12  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_13  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_14  : std_logic_vector(11 downto 0) := (others => '0');
+  signal input_15  : std_logic_vector(11 downto 0) := (others => '0');
+  signal mutes     : std_logic_vector(15 downto 0);
   signal mixed_out : std_logic_vector(11 downto 0);
 
 begin
@@ -41,6 +46,11 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
+      input_11  => input_11,
+      input_12  => input_12,
+      input_13  => input_13,
+      input_14  => input_14,
+      input_15  => input_15,
       mutes     => mutes,
       mixed_out => mixed_out
     );

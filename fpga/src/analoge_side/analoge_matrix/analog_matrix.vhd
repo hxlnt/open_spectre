@@ -23,9 +23,9 @@ use work.array_pck.all;
 entity analog_matrix is
     Port (
          clk : in STD_LOGIC;
-         mixer_inputs : in array_12(10 downto 0); -- the inputs to the matrix mixer
-         mutes : in array_10(9 downto 0); -- the mutes for each out of the matrix mixer
-        outputs : out array_12(9 downto 0)  
+         mixer_inputs : in array_12(15 downto 0); -- the inputs to the matrix mixer
+         mutes : in array_16(19 downto 0); -- the mutes for each out of the matrix mixer
+        outputs : out array_12(19 downto 0)  
     );
 end analog_matrix;
 
@@ -42,6 +42,11 @@ architecture Behavioral of analog_matrix is
   signal input_8   : std_logic_vector(11 downto 0);
   signal input_9   : std_logic_vector(11 downto 0);
   signal input_10  : std_logic_vector(11 downto 0);
+  signal input_11  : std_logic_vector(11 downto 0);
+  signal input_12  : std_logic_vector(11 downto 0);
+  signal input_13  : std_logic_vector(11 downto 0);
+  signal input_14  : std_logic_vector(11 downto 0);
+  signal input_15  : std_logic_vector(11 downto 0);
 
 begin
     -- unpack input channels
@@ -56,11 +61,18 @@ begin
     input_8  <= mixer_inputs(8);
     input_9  <= mixer_inputs(9);
     input_10 <= mixer_inputs(10);
+    input_11 <= mixer_inputs(11);
+    input_12 <= mixer_inputs(12);
+    input_13 <= mixer_inputs(13);
+    input_14 <= mixer_inputs(14);
+    input_15 <= mixer_inputs(15);
 
 
 
-    -- Instantiate 10 instances of the AudioMixer module
-    Mix0: entity work.mixer_11_1 -- change to output name for clarity
+    -- Instantiate 20 instances of the AudioMixer module
+    g_GENERATE_MIXER: for ii in 0 to 19 generate
+
+    Mix: entity work.mixer_11_1 -- change to output name for clarity
     port map (
       clk       => clk,
       input_0   => input_0,
@@ -74,171 +86,16 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes(0),
-      mixed_out => outputs(0)
+      input_11  => input_11,
+      input_12  => input_12,
+      input_13  => input_13,
+      input_14  => input_14,
+      input_15  => input_15,
+      mutes     => mutes(ii),
+      mixed_out => outputs(ii)
     );
-
-    Mix1: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(1),
-      mixed_out => outputs(1)
-    );
-
-    Mix2: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(2),
-      mixed_out => outputs(2)
-    );
-
-    Mix3: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(3),
-      mixed_out => outputs(3)
-    );
-
-    Mix4: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(4),
-      mixed_out => outputs(4)
-    );
-
-    Mix5: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(5),
-      mixed_out => outputs(5)
-    );
-
-    Mix6: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(6),
-      mixed_out => outputs(6)
-    );
-
-    Mix7: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(7),
-      mixed_out => outputs(7)
-    );
-
-    Mix8: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(8),
-      mixed_out => outputs(8)
-    );
-
-    Mix9: entity work.mixer_11_1 -- change to output name for clarity
-    port map (
-      clk       => clk,
-      input_0   => input_0,
-      input_1   => input_1,
-      input_2   => input_2,
-      input_3   => input_3,
-      input_4   => input_4,
-      input_5   => input_5,
-      input_6   => input_6,
-      input_7   => input_7,
-      input_8   => input_8,
-      input_9   => input_9,
-      input_10  => input_10,
-      mutes     => mutes(9),
-      mixed_out => outputs(9)
-    );
+    
+  end generate g_GENERATE_MIXER;
 
 
 end Behavioral;

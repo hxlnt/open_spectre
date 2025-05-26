@@ -11,9 +11,9 @@ end entity tb_analog_matrix;
 architecture behavior of tb_analog_matrix is
 
     signal clk          : std_logic := '0';
-    signal mixer_inputs : array_12(10 downto 0);
-    signal mutes        : array_10(9 downto 0);
-    signal outputs      : array_12(9 downto 0);
+    signal mixer_inputs : array_12(15 downto 0);
+    signal mutes        : array_16(19 downto 0);
+    signal outputs      : array_12(19 downto 0);
 
     constant clk_period : time := 10 ns;
 
@@ -44,26 +44,26 @@ begin
     stim_proc : process
     begin
         -- Initialize inputs
-        for i in 0 to 10 loop
+        for i in 0 to 15 loop
             mixer_inputs(i) <= std_logic_vector(to_unsigned(i, 12));
         end loop;
 
         -- All mutes off initially (allow signal through)
-        for i in 0 to 9 loop
+        for i in 0 to 19 loop
             mutes(i) <= (others => '0');
         end loop;
 
         wait for 100 ns;
         
         -- All mutes on  
-        for i in 0 to 9 loop
+        for i in 0 to 19 loop
             mutes(i) <= (others => '1');
         end loop;
 
         wait for 100 ns;
 
         -- Enable all mute on even outputs
-        for i in 0 to 9 loop
+        for i in 0 to 19 loop
             if i mod 2 = 0 then
                 mutes(i) <= (others => '1'); -- all channels muted
             else
