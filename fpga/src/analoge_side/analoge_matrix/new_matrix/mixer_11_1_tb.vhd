@@ -63,8 +63,8 @@ begin
     report "Starting testbench";
 
     -- Default values
-    input_0   <= std_logic_vector(to_unsigned(100, 12));
-    input_1   <= std_logic_vector(to_unsigned(200, 12));
+    input_0   <= std_logic_vector(to_unsigned(0, 12));
+    input_1   <= std_logic_vector(to_unsigned(0, 12));
     input_2   <= std_logic_vector(to_unsigned(0, 12));
     input_3   <= std_logic_vector(to_unsigned(0, 12));
     input_4   <= std_logic_vector(to_unsigned(0, 12));
@@ -77,11 +77,45 @@ begin
     mutes     <= (others => '0');  -- all unmuted
 
     wait until rising_edge(clk);  -- wait one cycle for processing
-    wait until rising_edge(clk);
-    input_2   <= std_logic_vector(to_unsigned(100, 12));
-    wait until rising_edge(clk);  -- wait one cycle for processing
-    wait until rising_edge(clk);
+    input_0   <= std_logic_vector(to_unsigned(1, 12));
+    input_1   <= std_logic_vector(to_unsigned(1, 12));
+    input_2   <= std_logic_vector(to_unsigned(1, 12));
+    input_3   <= std_logic_vector(to_unsigned(1, 12));
+    input_4   <= std_logic_vector(to_unsigned(1, 12));
+    input_5   <= std_logic_vector(to_unsigned(1, 12));
+    input_6   <= std_logic_vector(to_unsigned(1, 12));
+    input_7   <= std_logic_vector(to_unsigned(1, 12));
+    input_8   <= std_logic_vector(to_unsigned(1, 12));
+    input_9   <= std_logic_vector(to_unsigned(1, 12));
+    input_10  <= std_logic_vector(to_unsigned(1, 12));
+    wait for 100 ns;
+    input_0   <= std_logic_vector(to_unsigned(0, 12));
+    input_1   <= std_logic_vector(to_unsigned(0, 12));
     input_2   <= std_logic_vector(to_unsigned(0, 12));
+    input_3   <= std_logic_vector(to_unsigned(0, 12));
+    input_4   <= std_logic_vector(to_unsigned(0, 12));
+    input_5   <= std_logic_vector(to_unsigned(0, 12));
+    input_6   <= std_logic_vector(to_unsigned(2, 12));
+    input_7   <= std_logic_vector(to_unsigned(2, 12));
+    input_8   <= std_logic_vector(to_unsigned(2, 12));
+    input_9   <= std_logic_vector(to_unsigned(2, 12));
+    input_10  <= std_logic_vector(to_unsigned(2, 12));
+    wait for 100 ns;
+    input_0   <= std_logic_vector(to_unsigned(1, 12));
+    input_1   <= std_logic_vector(to_unsigned(1, 12));
+    input_2   <= std_logic_vector(to_unsigned(1, 12));
+    input_3   <= std_logic_vector(to_unsigned(1, 12));
+    input_4   <= std_logic_vector(to_unsigned(1, 12));
+    input_5   <= std_logic_vector(to_unsigned(1, 12));
+    input_6   <= std_logic_vector(to_unsigned(1, 12));
+    input_7   <= std_logic_vector(to_unsigned(1, 12));
+    input_8   <= std_logic_vector(to_unsigned(1, 12));
+    input_9   <= std_logic_vector(to_unsigned(1, 12));
+    input_10  <= std_logic_vector(to_unsigned(1, 12));
+    wait for 100 ns;
+    mutes     <= (others => '1');  -- all unmuted
+
+    
 
 --    report "All unmuted, mixed_out = " & integer'image(to_integer(unsigned(mixed_out)));
 

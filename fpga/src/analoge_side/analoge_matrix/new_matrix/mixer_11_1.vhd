@@ -1,7 +1,3 @@
--- VHDL 2008
--- 11 input unity gain mixer with mutes, all ins and outs are 12-bit
--- 6 cycle pipeline delay
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -20,69 +16,61 @@ entity mixer_11_1 is
     input_8 : in  std_logic_vector(11 downto 0);
     input_9 : in  std_logic_vector(11 downto 0);
     input_10: in  std_logic_vector(11 downto 0);
-
     mutes   : in  std_logic_vector(10 downto 0);  -- '0' = unmuted, '1' = muted
 
     mixed_out : out std_logic_vector(11 downto 0)
   );
 end entity;
-architecture pipelined of mixer_11_1 is
 
-  type t_unsigned12_array is array (0 to 10) of unsigned(11 downto 0);
-  type t_unsigned13_array is array (0 to 4) of unsigned(12 downto 0);
-  type t_unsigned14_array is array (0 to 2) of unsigned(13 downto 0);
-
-  signal a       : t_unsigned12_array;
-  signal s1      : t_unsigned13_array;
-  signal s2      : t_unsigned14_array;
-  signal final_sum : unsigned(15 downto 0);
+architecture unpipelined of mixer_11_1 is
+  type unsigned_11_arr    is array (natural range <>) of unsigned(11 downto 0);
+  signal a         : unsigned_11_arr(10 downto 0);
+  signal total_sum : unsigned(15 downto 0);
   signal mixed_reg : std_logic_vector(11 downto 0);
-
 begin
-  mixed_out <= mixed_reg;
-  
 
+  mixed_out <= mixed_reg;
 
   process(clk)
+    variable partial_sum : unsigned(15 downto 0);
   begin
     if rising_edge(clk) then
-    
-     --stage 1 apply mute
-      a(0)  <= (others => '0') when mutes(0) = '1' else unsigned(input_0);
-      a(1)  <= (others => '0') when mutes(1) = '1' else unsigned(input_1);
-      a(2)  <= (others => '0') when mutes(2) = '1' else unsigned(input_2);
-      a(3)  <= (others => '0') when mutes(3) = '1' else unsigned(input_3);
-      a(4)  <= (others => '0') when mutes(4) = '1' else unsigned(input_4);
-      a(5)  <= (others => '0') when mutes(5) = '1' else unsigned(input_5);
-      a(6)  <= (others => '0') when mutes(6) = '1' else unsigned(input_6);
-      a(7)  <= (others => '0') when mutes(7) = '1' else unsigned(input_7);
-      a(8)  <= (others => '0') when mutes(8) = '1' else unsigned(input_8);
-      a(9)  <= (others => '0') when mutes(9) = '1' else unsigned(input_9);
-      a(10) <= (others => '0') when mutes(10) = '1' else unsigned(input_10);
 
+      -- Apply mutes
+      for i in 0 to 10 loop
+        if mutes(i) = '1' then
+          a(i) <= (others => '0');
+        else
+          a(i) <= unsigned(input_0) when i = 0 else
+                  unsigned(input_1) when i = 1 else
+                  unsigned(input_2) when i = 2 else
+                  unsigned(input_3) when i = 3 else
+                  unsigned(input_4) when i = 4 else
+                  unsigned(input_5) when i = 5 else
+                  unsigned(input_6) when i = 6 else
+                  unsigned(input_7) when i = 7 else
+                  unsigned(input_8) when i = 8 else
+                  unsigned(input_9) when i = 9 else
+                  unsigned(input_10);  -- i = 10
+        end if;
+      end loop;
 
-      -- Stage 2: pairwise sum (adds 2x 12-bit -> 13-bit)
-      s1(0) <= resize(a(0), 13) + resize(a(1), 13);
-      s1(1) <= resize(a(2), 13) + resize(a(3), 13);
-      s1(2) <= resize(a(4), 13) + resize(a(5), 13);
-      s1(3) <= resize(a(6), 13) + resize(a(7), 13);
-      s1(4) <= resize(a(8), 13) + resize(a(9), 13);  -- 5 pairs, a(10) left out
+      -- Total sum of all inputs
+      partial_sum := (others => '0');
+      for i in 0 to 10 loop
+        partial_sum := partial_sum + resize(a(i), 16);
+      end loop;
 
-      -- Stage 3: add partials with leftover
-      s2(0) <= resize(s1(0), 14) + resize(s1(1), 14);
-      s2(1) <= resize(s1(2), 14) + resize(s1(3), 14);
-      s2(2) <= resize(s1(4), 14) + resize(a(10), 14);  -- combine with a(10)
+      total_sum <= partial_sum;
 
-      -- Final sum
-      final_sum <= resize(s2(0), 16) + resize(s2(1), 16) + resize(s2(2), 16);
-
-      -- Saturate to 12 bits
-      if final_sum > to_unsigned(4095, 16) then
+      -- Saturation to 12 bits
+      if total_sum > to_unsigned(4095, 16) then
         mixed_reg <= std_logic_vector(to_unsigned(4095, 12));
       else
-        mixed_reg <= std_logic_vector(final_sum(11 downto 0));
+        mixed_reg <= std_logic_vector(total_sum(11 downto 0));
       end if;
 
     end if;
   end process;
+
 end architecture;

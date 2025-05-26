@@ -23,9 +23,9 @@ use work.array_pck.all;
 entity analog_matrix is
     Port (
          clk : in STD_LOGIC;
-         reset : in STD_LOGIC;
-         mixer_inputs : in array_12(10 downto 0);
-        outputs : out array_12(19 downto 0)  
+         mixer_inputs : in array_12(10 downto 0); -- the inputs to the matrix mixer
+         mutes : in array_10(9 downto 0); -- the mutes for each out of the matrix mixer
+        outputs : out array_12(9 downto 0)  
     );
 end analog_matrix;
 
@@ -74,7 +74,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(0),
       mixed_out => outputs(0)
     );
 
@@ -92,7 +92,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(1),
       mixed_out => outputs(1)
     );
 
@@ -110,7 +110,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(2),
       mixed_out => outputs(2)
     );
 
@@ -128,7 +128,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(3),
       mixed_out => outputs(3)
     );
 
@@ -146,7 +146,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(4),
       mixed_out => outputs(4)
     );
 
@@ -164,7 +164,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(5),
       mixed_out => outputs(5)
     );
 
@@ -182,7 +182,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(6),
       mixed_out => outputs(6)
     );
 
@@ -200,7 +200,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(7),
       mixed_out => outputs(7)
     );
 
@@ -218,7 +218,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(8),
       mixed_out => outputs(8)
     );
 
@@ -236,7 +236,7 @@ begin
       input_8   => input_8,
       input_9   => input_9,
       input_10  => input_10,
-      mutes     => mutes,
+      mutes     => mutes(9),
       mixed_out => outputs(9)
     );
 
