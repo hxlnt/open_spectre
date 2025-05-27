@@ -60,6 +60,7 @@ entity analog_side is
     noise_freq    : in std_logic_vector(9 downto 0);
     slew_in       : in std_logic_vector(2 downto 0);
     cycle_recycle : in std_logic;
+    -- Video from the digital side
     YUV_in        : in std_logic_vector(23 downto 0);
     y_alpha       : in std_logic_vector(11 downto 0);
     u_alpha       : in std_logic_vector(11 downto 0);
@@ -156,23 +157,6 @@ architecture Behavioral of analog_side is
    signal u_digital      :  std_logic_vector(11 downto 0);
    signal v_digital      :  std_logic_vector(11 downto 0);
 
-  --shape gen matrix output
---  signal matrix_pos_h_1   : std_logic_vector(11 downto 0);
---  signal matrix_pos_v_1   : std_logic_vector(11 downto 0);
---  signal matrix_zoom_h_1  : std_logic_vector(11 downto 0);
---  signal matrix_zoom_v_1  : std_logic_vector(11 downto 0);
---  signal matrix_circle_1  : std_logic_vector(11 downto 0);
---  signal matrix_gear_1    : std_logic_vector(11 downto 0);
---  signal matrix_lantern_1 : std_logic_vector(11 downto 0);
---  signal matrix_fizz_1    : std_logic_vector(11 downto 0);
---  signal matrix_pos_h_2   : std_logic_vector(11 downto 0);
---  signal matrix_pos_v_2   : std_logic_vector(11 downto 0);
---  signal matrix_zoom_h_2  : std_logic_vector(11 downto 0);
---  signal matrix_zoom_v_2  : std_logic_vector(11 downto 0);
---  signal matrix_circle_2  : std_logic_vector(11 downto 0);
---  signal matrix_gear_2    : std_logic_vector(11 downto 0);
---  signal matrix_lantern_2 : std_logic_vector(11 downto 0);
---  signal matrix_fizz_2    : std_logic_vector(11 downto 0);
   --shape gen mixed with register file inputs
   signal mixed_pos_h_1   : std_logic_vector(11 downto 0);
   signal mixed_pos_v_1   : std_logic_vector(11 downto 0);
@@ -192,7 +176,6 @@ architecture Behavioral of analog_side is
   signal mixed_fizz_2    : std_logic_vector(11 downto 0);
 
 begin
-
 
   --split incoming YUV data from the digital side to the 11 bit mixer
   y_digital <= YUV_in(23 downto 16) & "0000";
@@ -313,8 +296,6 @@ begin
   B => fizz_2,
   SUM => mixed_fizz_2
   );
-
-  
   --analoge matrix outputs
   matrix_pos_h_1   <= mixed_pos_h_1;
   matrix_pos_v_1   <= mixed_pos_v_1;
@@ -337,8 +318,6 @@ begin
   v_anna           <= outputs(18);
   vid_span         <= outputs(19)(11 downto 4); -- video span is only 8 bits
   
-  
-
   analox_matrix : entity work.mixer_interface
     port map
     (
@@ -346,7 +325,7 @@ begin
       rst          => rst,
       wr           => wr,
       out_addr     => out_addr_int,
-      gain_in      => gain_in,
+      gain_in      => not gain_in,
       gain_out     => gain_out,
       mixer_inputs => mixer_inputs,
       outputs      => outputs
