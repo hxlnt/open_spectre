@@ -77,7 +77,6 @@ entity analog_side is
    osc_2_freq : in STD_LOGIC_VECTOR(9 downto 0);
    osc_2_derv : in STD_LOGIC_VECTOR(7 downto 0);
     --signals from the digital side
-    audio_in_sig_i : in std_logic_vector(9 downto 0);
     dsm_hi_i       : in std_logic_vector(9 downto 0);
     dsm_lo_i       : in std_logic_vector(9 downto 0);
 --    y_digital      : in std_logic_vector(11 downto 0);
@@ -215,7 +214,7 @@ begin
   mixer_inputs(9)  <= dsm_hi_i       & "00";
   mixer_inputs(10) <= dsm_lo_i     & "00";
 
-
+ -- mixers for Shape Gen1
   pos_h_1_mix : entity work.Adder_12bit_NoOverflow 
   port map(
   A => outputs(0),
@@ -237,7 +236,7 @@ begin
   zoom_v_1_mix : entity work.Adder_12bit_NoOverflow 
   port map(
   A => outputs(3),
-  B => pos_v_1,
+  B => zoom_v_1,
   SUM => mixed_zoom_v_1
   );
   circle_1_mix : entity work.Adder_12bit_NoOverflow 
@@ -264,6 +263,56 @@ begin
   B => fizz_1,
   SUM => mixed_fizz_1
   );
+  
+  -- Mixers for shape gen 2
+   pos_h_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(8),
+  B => pos_h_2,
+  SUM => mixed_pos_h_2
+  );
+  pos_v_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(10),
+  B => zoom_v_2,
+  SUM => mixed_pos_v_2
+  );
+  zoom_h_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(11),
+  B => zoom_h_2,
+  SUM => mixed_zoom_h_2
+  );
+  zoom_v_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(12),
+  B => pos_v_2,
+  SUM => mixed_zoom_v_2
+  );
+  circle_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(13),
+  B => circle_2,
+  SUM => mixed_circle_2
+  );
+  gear_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(14),
+  B => gear_2,
+  SUM => mixed_gear_2
+  );
+  lantern_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(15),
+  B => lantern_2,
+  SUM => mixed_lantern_2
+  );
+  fizz_2_mix : entity work.Adder_12bit_NoOverflow 
+  port map(
+  A => outputs(16),
+  B => fizz_2,
+  SUM => mixed_fizz_2
+  );
 
   
   --analoge matrix outputs
@@ -275,14 +324,14 @@ begin
   matrix_gear_1    <= mixed_gear_1;
   matrix_lantern_1 <= mixed_lantern_1;
   matrix_fizz_1    <= mixed_fizz_1;
-  matrix_pos_h_2   <= outputs(8);
-  matrix_pos_v_2   <= outputs(9);
-  matrix_zoom_h_2  <= outputs(10);
-  matrix_zoom_v_2  <= outputs(11);
-  matrix_circle_2  <= outputs(12);
-  matrix_gear_2    <= outputs(13);
-  matrix_lantern_2 <= outputs(14);
-  matrix_fizz_2    <= outputs(15);
+  matrix_pos_h_2   <= mixed_pos_h_2;
+  matrix_pos_v_2   <= mixed_pos_v_2;
+  matrix_zoom_h_2  <= mixed_zoom_h_2;
+  matrix_zoom_v_2  <= mixed_zoom_v_2;
+  matrix_circle_2  <= mixed_circle_2;
+  matrix_gear_2    <= mixed_gear_2;
+  matrix_lantern_2 <= mixed_lantern_2;
+  matrix_fizz_2    <= mixed_fizz_2;
   y_anna           <= outputs(16);
   u_anna           <= outputs(17);
   v_anna           <= outputs(18);
