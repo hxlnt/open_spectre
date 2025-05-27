@@ -37,8 +37,8 @@ entity analog_side is
     vsync    : in std_logic;
     hsync    : in std_logic;
     out_addr : in std_logic_vector(7 downto 0);
-    ch_addr  : in std_logic_vector(7 downto 0);
-    gain_in  : in std_logic_vector(4 downto 0);
+    gain_out  : out std_logic_vector(15 downto 0);
+    gain_in  : in std_logic_vector(15 downto 0);
     --analoge controls from reg file -- these should be added ot the matrix outputs so that you always have cxontroll of these things, these ins act as an offset
     pos_h_1       : in std_logic_vector(11 downto 0);
     pos_v_1       : in std_logic_vector(11 downto 0);
@@ -72,10 +72,10 @@ entity analog_side is
    --osc control
    sync_sel_osc1 : in STD_LOGIC_VECTOR(1 downto 0);
    osc_1_freq : in STD_LOGIC_VECTOR(9 downto 0);
-   osc_1_derv : in STD_LOGIC_VECTOR(9 downto 0);
+   osc_1_derv : in STD_LOGIC_VECTOR(7 downto 0);
    sync_sel_osc2 : in STD_LOGIC_VECTOR(1 downto 0);
    osc_2_freq : in STD_LOGIC_VECTOR(9 downto 0);
-   osc_2_derv : in STD_LOGIC_VECTOR(9 downto 0);
+   osc_2_derv : in STD_LOGIC_VECTOR(7 downto 0);
     --signals from the digital side
     audio_in_sig_i : in std_logic_vector(9 downto 0);
     dsm_hi_i       : in std_logic_vector(9 downto 0);
@@ -84,12 +84,29 @@ entity analog_side is
 --    u_digital      : in std_logic_vector(11 downto 0);
 --    v_digital      : in std_logic_vector(11 downto 0);
 
-    -- signals to the digital side
+    -- signals passed to the digital side (not in original design but i think they are cool)
     vid_span : out std_logic_vector(7 downto 0);
     osc_1_sqr_o : out std_logic;
     osc_2_sqr_o : out std_logic;
     noise_1_o : out std_logic;
     noise_2_o : out std_logic;
+   -- Signals sent to the shape generator
+   matrix_pos_h_1   : out std_logic_vector(11 downto 0);
+   matrix_pos_v_1   : out std_logic_vector(11 downto 0);
+   matrix_zoom_h_1  : out std_logic_vector(11 downto 0);
+   matrix_zoom_v_1  : out std_logic_vector(11 downto 0);
+   matrix_circle_1  : out std_logic_vector(11 downto 0);
+   matrix_gear_1    : out std_logic_vector(11 downto 0);
+   matrix_lantern_1 : out std_logic_vector(11 downto 0);
+   matrix_fizz_1    : out std_logic_vector(11 downto 0);
+   matrix_pos_h_2   : out std_logic_vector(11 downto 0);
+   matrix_pos_v_2   : out std_logic_vector(11 downto 0);
+   matrix_zoom_h_2  : out std_logic_vector(11 downto 0);
+   matrix_zoom_v_2  : out std_logic_vector(11 downto 0);
+   matrix_circle_2  : out std_logic_vector(11 downto 0);
+   matrix_gear_2    : out std_logic_vector(11 downto 0);
+   matrix_lantern_2 : out std_logic_vector(11 downto 0);
+   matrix_fizz_2    : out std_logic_vector(11 downto 0);
     
     y_out    : out std_logic_vector(7 downto 0);
     u_out    : out std_logic_vector(7 downto 0);
@@ -103,7 +120,7 @@ end analog_side;
 
 architecture Behavioral of analog_side is
 
-  signal mixer_inputs : array_12(10 downto 0);
+  signal mixer_inputs : array_12(15 downto 0) := (others => (others => '0'));
   signal outputs      : array_12(19 downto 0); -- 12-bit wide outputs
 
   signal out_addr_int : integer;
@@ -141,22 +158,22 @@ architecture Behavioral of analog_side is
    signal v_digital      :  std_logic_vector(11 downto 0);
 
   --shape gen matrix output
-  signal matrix_pos_h_1   : std_logic_vector(11 downto 0);
-  signal matrix_pos_v_1   : std_logic_vector(11 downto 0);
-  signal matrix_zoom_h_1  : std_logic_vector(11 downto 0);
-  signal matrix_zoom_v_1  : std_logic_vector(11 downto 0);
-  signal matrix_circle_1  : std_logic_vector(11 downto 0);
-  signal matrix_gear_1    : std_logic_vector(11 downto 0);
-  signal matrix_lantern_1 : std_logic_vector(11 downto 0);
-  signal matrix_fizz_1    : std_logic_vector(11 downto 0);
-  signal matrix_pos_h_2   : std_logic_vector(11 downto 0);
-  signal matrix_pos_v_2   : std_logic_vector(11 downto 0);
-  signal matrix_zoom_h_2  : std_logic_vector(11 downto 0);
-  signal matrix_zoom_v_2  : std_logic_vector(11 downto 0);
-  signal matrix_circle_2  : std_logic_vector(11 downto 0);
-  signal matrix_gear_2    : std_logic_vector(11 downto 0);
-  signal matrix_lantern_2 : std_logic_vector(11 downto 0);
-  signal matrix_fizz_2    : std_logic_vector(11 downto 0);
+--  signal matrix_pos_h_1   : std_logic_vector(11 downto 0);
+--  signal matrix_pos_v_1   : std_logic_vector(11 downto 0);
+--  signal matrix_zoom_h_1  : std_logic_vector(11 downto 0);
+--  signal matrix_zoom_v_1  : std_logic_vector(11 downto 0);
+--  signal matrix_circle_1  : std_logic_vector(11 downto 0);
+--  signal matrix_gear_1    : std_logic_vector(11 downto 0);
+--  signal matrix_lantern_1 : std_logic_vector(11 downto 0);
+--  signal matrix_fizz_1    : std_logic_vector(11 downto 0);
+--  signal matrix_pos_h_2   : std_logic_vector(11 downto 0);
+--  signal matrix_pos_v_2   : std_logic_vector(11 downto 0);
+--  signal matrix_zoom_h_2  : std_logic_vector(11 downto 0);
+--  signal matrix_zoom_v_2  : std_logic_vector(11 downto 0);
+--  signal matrix_circle_2  : std_logic_vector(11 downto 0);
+--  signal matrix_gear_2    : std_logic_vector(11 downto 0);
+--  signal matrix_lantern_2 : std_logic_vector(11 downto 0);
+--  signal matrix_fizz_2    : std_logic_vector(11 downto 0);
   --shape gen mixed with register file inputs
   signal mixed_pos_h_1   : std_logic_vector(11 downto 0);
   signal mixed_pos_v_1   : std_logic_vector(11 downto 0);
@@ -184,7 +201,6 @@ begin
   v_digital <= YUV_in(7 downto 0) & "0000";
 
   out_addr_int <= to_integer(unsigned(out_addr));
-  ch_addr_int  <= to_integer(unsigned(ch_addr));
 
   --analoge matrix inputs
   mixer_inputs(0)  <= osc1_out_sq;
@@ -253,7 +269,7 @@ begin
   --analoge matrix outputs
   matrix_pos_h_1   <= mixed_pos_h_1;
   matrix_pos_v_1   <= mixed_pos_v_1;
-  matrix_zoom_h_1  <= mixed_zoom_v_1;
+  matrix_zoom_h_1  <= mixed_zoom_h_1;
   matrix_zoom_v_1  <= mixed_zoom_v_1;
   matrix_circle_1  <= mixed_circle_1;
   matrix_gear_1    <= mixed_gear_1;
@@ -281,8 +297,8 @@ begin
       rst          => rst,
       wr           => wr,
       out_addr     => out_addr_int,
-      ch_addr      => ch_addr_int,
       gain_in      => gain_in,
+      gain_out     => gain_out,
       mixer_inputs => mixer_inputs,
       outputs      => outputs
     );
@@ -295,6 +311,7 @@ begin
         sync_sel => sync_sel_osc1,
         sync_plus => vsync,
         sync_minus => hsync,
+        dist_level => osc_1_derv,
         sin_out => osc1_out_sin,
         square_out => osc1_out_sq_i
         );
@@ -309,6 +326,7 @@ begin
         sync_sel => sync_sel_osc2,
         sync_plus => vsync,
         sync_minus => hsync,
+        dist_level => osc_2_derv,
         sin_out => osc2_out_sin,
         square_out => osc2_out_sq_i
         );
