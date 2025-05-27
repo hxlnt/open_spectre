@@ -33,7 +33,7 @@ architecture testbench of analog_side_tb is
   signal cycle_recycle : std_logic := '0';
 
   signal YUV_in  : std_logic_vector(23 downto 0) := x"123456";
-  signal y_alpha, u_alpha, v_alpha : std_logic_vector(11 downto 0) := (others => '1');
+  signal y_alpha, u_alpha, v_alpha : std_logic_vector(11 downto 0) := (others => '0'); -- alpha of 0 = full colour passthrough
 
   signal audio_in_t, audio_in_b, audio_in_sig : std_logic_vector(9 downto 0) := (others => '0');
 
