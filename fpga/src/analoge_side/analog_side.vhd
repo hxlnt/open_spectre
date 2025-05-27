@@ -420,6 +420,6 @@ osc_1_sqr_o <= osc1_out_sq_i;
 osc_2_sqr_o <= osc2_out_sq_i;
 
 noise_1_o <= noise_1(7);
-noise_2_o <= noise_2(6);
+noise_2_o <= noise_2(7);
 
 end Behavioral;
