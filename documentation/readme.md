@@ -51,11 +51,11 @@ tb_test_digital_side (tested and appears fully working)
 </pre>
 <pre>
 -------------------------------------------------------------
-Hierarchy of tb_analog_side is:
+Hierarchy of tb_analog_side is: !!NEED TO REGENERATE IS MISSING ATTENUATORS AND SLEW MODULES!!
 
 tb_analog_side
     ├─ analog_side : analog_side 
-        │   ├─ adder_12bit_nooverflow : pos_h_1_mix (*)
+        │   ├─ adder_12bit_nooverflow : pos_h_1_mix (*) -- these should be adder subtractors, acting more like an offset to the values from the analog matrix 
         │   ├─ adder_12bit_nooverflow : pos_v_1_mix (*)
         │   ├─ adder_12bit_nooverflow : zoom_h_1_mix (*)
         │   ├─ adder_12bit_nooverflow : zoom_v_1_mix (*)
@@ -63,7 +63,7 @@ tb_analog_side
         │   ├─ adder_12bit_nooverflow : gear_1_mix (*)
         │   ├─ adder_12bit_nooverflow : lantern_1_mix (*)
         │   ├─ adder_12bit_nooverflow : fizz_1_mix (*)
-        │   ├─ mixer_interface : analox_matrix (WIP no dsp, needs TB but looks close!)
+        │   ├─ mixer_interface : analox_matrix (*)
                 │   ├─ analog_matrix : analog_matrix (*)
                         │   ├─ audiomixer : audiomixer (*)
                         │   ├─ audiomixer : audiomixer
