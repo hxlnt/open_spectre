@@ -60,11 +60,12 @@ entity analog_side is
     noise_freq    : in std_logic_vector(9 downto 0);
     slew_in       : in std_logic_vector(2 downto 0);
     cycle_recycle : in std_logic;
+    noise_alpha       : in std_logic_vector(11 downto 0); 
     -- Video from the digital side
     YUV_in        : in std_logic_vector(23 downto 0);
-    y_alpha       : in std_logic_vector(11 downto 0);
-    u_alpha       : in std_logic_vector(11 downto 0);
-    v_alpha       : in std_logic_vector(11 downto 0);
+    y_alpha       : in std_logic_vector(11 downto 0); -- 0 is unattenuated, 
+    u_alpha       : in std_logic_vector(11 downto 0); -- 0 is unattenuated, 
+    v_alpha       : in std_logic_vector(11 downto 0); -- 0 is unattenuated, 
     
    audio_in_t   : in std_logic_vector(9 downto 0);
    audio_in_b   : in std_logic_vector(9 downto 0);
@@ -74,15 +75,18 @@ entity analog_side is
    sync_sel_osc1 : in STD_LOGIC_VECTOR(1 downto 0);
    osc_1_freq : in STD_LOGIC_VECTOR(9 downto 0);
    osc_1_derv : in STD_LOGIC_VECTOR(7 downto 0);
+   osc1_alpha       : in std_logic_vector(11 downto 0); 
    sync_sel_osc2 : in STD_LOGIC_VECTOR(1 downto 0);
    osc_2_freq : in STD_LOGIC_VECTOR(9 downto 0);
    osc_2_derv : in STD_LOGIC_VECTOR(7 downto 0);
+   osc2_alpha       : in std_logic_vector(11 downto 0); 
     --signals from the digital side
     dsm_hi_i       : in std_logic_vector(9 downto 0);
+    dsm_hi_alpha       : in std_logic_vector(11 downto 0); 
+
     dsm_lo_i       : in std_logic_vector(9 downto 0);
---    y_digital      : in std_logic_vector(11 downto 0);
---    u_digital      : in std_logic_vector(11 downto 0);
---    v_digital      : in std_logic_vector(11 downto 0);
+    dsm_lo_alpha       : in std_logic_vector(11 downto 0);
+
 
     -- signals passed to the digital side (not in original design but i think they are cool)
     vid_span : out std_logic_vector(7 downto 0);
@@ -111,9 +115,6 @@ entity analog_side is
     y_out    : out std_logic_vector(7 downto 0);
     u_out    : out std_logic_vector(7 downto 0);
     v_out    : out std_logic_vector(7 downto 0)
---    outputs_o      : out array_12(19 downto 0) -- 12-bit wide outputs
-
-    
 
   );
 end analog_side;
@@ -133,6 +134,15 @@ architecture Behavioral of analog_side is
   signal osc2_out_sin : std_logic_vector(11 downto 0);
   signal noise_1      : std_logic_vector(9 downto 0);
   signal noise_2      : std_logic_vector(9 downto 0);
+  -- Attenuated versions of these signals
+  signal osc1_out_sq_att  : std_logic_vector(11 downto 0);
+  signal osc1_out_sin_att : std_logic_vector(11 downto 0);
+  signal osc2_out_sq_att  : std_logic_vector(11 downto 0);
+  signal osc2_out_sin_att : std_logic_vector(11 downto 0);
+  signal noise_1_padded   : std_logic_vector(11 downto 0);
+  signal noise_2_padded   : std_logic_vector(11 downto 0);
+  signal noise_1_att      : std_logic_vector(11 downto 0);
+  signal noise_2_att      : std_logic_vector(11 downto 0);
 
   --oscilator outputs
   signal osc1_out_sq_i  : std_logic;
@@ -174,6 +184,17 @@ architecture Behavioral of analog_side is
   signal mixed_gear_2    : std_logic_vector(11 downto 0);
   signal mixed_lantern_2 : std_logic_vector(11 downto 0);
   signal mixed_fizz_2    : std_logic_vector(11 downto 0);
+  
+  signal dsm_lo_i_padded       :  std_logic_vector(11 downto 0);
+  signal dsm_hi_i_padded       :  std_logic_vector(11 downto 0);
+  signal dsm_lo_i_slew         :  std_logic_vector(11 downto 0); -- lpf version of the incoming square wave
+  signal dsm_lo_i_att          :  std_logic_vector(11 downto 0);
+  signal dsm_hi_i_att          :  std_logic_vector(11 downto 0);
+  
+  
+  signal not_gain_in  : std_logic_vector(15 downto 0);
+
+  constant c_zero_12 : std_logic_vector(11 downto 0) := (others => '0');
 
 begin
 
@@ -183,19 +204,91 @@ begin
   v_digital <= YUV_in(7 downto 0) & "0000";
 
   out_addr_int <= to_integer(unsigned(out_addr));
+  
+ -- attenuators for some of the analog matrix inputs
+ 
+   osc1_sq_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => osc1_out_sq,
+                  alpha => osc1_alpha,
+                  result => osc1_out_sq_att);
+  osc1_sin_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => osc1_out_sin,
+                  alpha => osc1_alpha,
+                  result => osc1_out_sin_att);
+  osc2_sq_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => osc2_out_sq,
+                  alpha => osc2_alpha,
+                  result => osc2_out_sq_att);
+  osc2_sin_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => osc2_out_sin,
+                  alpha => osc2_alpha,
+                  result => osc2_out_sin_att);
 
-  --analoge matrix inputs
-  mixer_inputs(0)  <= osc1_out_sq;
-  mixer_inputs(1)  <= osc1_out_sin;
-  mixer_inputs(2)  <= osc2_out_sq;
-  mixer_inputs(3)  <= osc2_out_sin ;
-  mixer_inputs(4)  <= noise_1     & "00";
-  mixer_inputs(5)  <= noise_2     & "00";
+  mixer_inputs(0)  <= osc1_out_sq_att;
+  mixer_inputs(1)  <= osc1_out_sin_att;
+  mixer_inputs(2)  <= osc2_out_sq_att;
+  mixer_inputs(3)  <= osc2_out_sin_att;
+                
+  noise_1_padded <= noise_1     & "00";
+  noise_1_o <= noise_1(7);
+  noise1_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => noise_1_padded,
+                  alpha => noise_alpha,
+                  result => noise_1_att);
+  mixer_inputs(4)  <= noise_1_att;
+    
+  noise_2_padded <= noise_2     & "00";
+  noise_2_o <= not noise_2(7); -- original circuit didnt do this, but i think its more interesting
+  noise2_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => noise_2_padded,
+                  alpha => noise_alpha,
+                  result => noise_2_att);
+  mixer_inputs(5)  <= noise_2_att; 
+          
   mixer_inputs(6)  <= audio_in_t   & "00";
   mixer_inputs(7)  <= audio_in_b  & "00";
   mixer_inputs(8)  <= audio_in_sig & "00";
-  mixer_inputs(9)  <= dsm_hi_i       & "00";
-  mixer_inputs(10) <= dsm_lo_i     & "00";
+  
+  dsm_hi_i_padded <= dsm_hi_i     & "00";
+  dsm_hi_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => dsm_hi_i_padded,
+                  alpha => dsm_hi_alpha,
+                  result => dsm_hi_i_att);
+  mixer_inputs(9)  <= dsm_hi_i_att;       
+  
+  -- This input form the digital matrix has a lpf on it
+   dsm_lo_i_padded <= dsm_lo_i     & "00";
+    
+   slew_dsm_lo : entity work.moving_average -- may have to tune this delta value
+       generic map (
+        G_NBIT => 12,
+        G_MAX_DELTA => 50
+       )
+       port map (
+        i_clk => clk,
+        i_rstb => rst,
+        i_sync_reset => rst,
+        i_data_ena => '1',
+        i_data => dsm_lo_i_padded,
+        o_data_valid => open,
+        o_data => dsm_lo_i_slew
+       );
+  
+  dsm_lo_att : entity work.AlphaBlend
+        port map (signal1 => c_zero_12,
+                  signal2 => dsm_lo_i_slew,
+                  alpha => dsm_lo_alpha,
+                  result => dsm_lo_i_att);
+      
+  mixer_inputs(10)  <= dsm_lo_i_att;         
+ 
 
  -- mixers for Shape Gen1
   pos_h_1_mix : entity work.Adder_12bit_NoOverflow 
@@ -318,6 +411,8 @@ begin
   v_anna           <= outputs(18);
   vid_span         <= outputs(19)(11 downto 4); -- video span is only 8 bits
   
+  not_gain_in <= not gain_in; -- flip the gain bits, which are like pins so that it makes sense that writing a 1 to a point on the mixer is like connecting that input
+  
   analox_matrix : entity work.mixer_interface
     port map
     (
@@ -325,7 +420,7 @@ begin
       rst          => rst,
       wr           => wr,
       out_addr     => out_addr_int,
-      gain_in      => not gain_in,
+      gain_in      => not_gain_in,
       gain_out     => gain_out,
       mixer_inputs => mixer_inputs,
       outputs      => outputs
@@ -419,7 +514,6 @@ begin
 osc_1_sqr_o <= osc1_out_sq_i;
 osc_2_sqr_o <= osc2_out_sq_i;
 
-noise_1_o <= noise_1(7);
-noise_2_o <= noise_2(7);
+
 
 end Behavioral;

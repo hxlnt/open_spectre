@@ -55,6 +55,8 @@ architecture testbench of analog_side_tb is
   signal matrix_circle_2, matrix_gear_2, matrix_lantern_2, matrix_fizz_2 : std_logic_vector(11 downto 0);
 
   signal y_out, u_out, v_out : std_logic_vector(7 downto 0);
+  
+  signal dsm_lo_alpha, dsm_hi_alpha, osc1_alpha, osc2_alpha, noise1_alpha, noise2_alpha  : std_logic_vector(11 downto 0) := (others => '0');
 
 begin
 
@@ -97,7 +99,11 @@ begin
       matrix_zoom_h_2 => matrix_zoom_h_2, matrix_zoom_v_2 => matrix_zoom_v_2,
       matrix_circle_2 => matrix_circle_2, matrix_gear_2 => matrix_gear_2,
       matrix_lantern_2 => matrix_lantern_2, matrix_fizz_2 => matrix_fizz_2,
-
+    
+      dsm_lo_alpha => dsm_lo_alpha , dsm_hi_alpha => dsm_hi_alpha, 
+      osc1_alpha => osc1_alpha, osc2_alpha => osc2_alpha,
+      noise_alpha => noise1_alpha,
+    
       y_out => y_out, u_out => u_out, v_out => v_out
     );
 
@@ -118,7 +124,7 @@ begin
     -- Initial reset
     noise_freq <= std_logic_vector(to_unsigned(30, 10));
     osc_1_freq <= std_logic_vector(to_unsigned(40, 10));
-    osc_1_freq <= std_logic_vector(to_unsigned(44, 10));
+    osc_2_freq <= std_logic_vector(to_unsigned(44, 10));
     
     wait for 20 ns;
     rst <= '0';
