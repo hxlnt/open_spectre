@@ -17,10 +17,10 @@ entity mixer_11_1 is
     input_9 : in  std_logic_vector(11 downto 0);
     input_10: in  std_logic_vector(11 downto 0);
     input_11: in  std_logic_vector(11 downto 0);
-    input_12: in  std_logic_vector(11 downto 0);
-    input_13: in  std_logic_vector(11 downto 0);
-    input_14: in  std_logic_vector(11 downto 0);
-    input_15: in  std_logic_vector(11 downto 0);
+    input_12: in  std_logic_vector(11 downto 0) := (others => '0');
+    input_13: in  std_logic_vector(11 downto 0) := (others => '0');
+    input_14: in  std_logic_vector(11 downto 0) := (others => '0');
+    input_15: in  std_logic_vector(11 downto 0) := (others => '0');
     mutes   : in  std_logic_vector(15 downto 0);  -- '0' = unmuted, '1' = muted
 
     mixed_out : out std_logic_vector(11 downto 0)
