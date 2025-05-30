@@ -291,49 +291,49 @@ begin
  
 
  -- mixers for Shape Gen1
-  pos_h_1_mix : entity work.Adder_12bit_NoOverflow 
+  pos_h_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(0),
   B => pos_h_1,
   SUM => mixed_pos_h_1
   );
-  pos_v_1_mix : entity work.Adder_12bit_NoOverflow 
+  pos_v_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(1),
   B => pos_v_1,
   SUM => mixed_pos_v_1
   );
-  zoom_h_1_mix : entity work.Adder_12bit_NoOverflow 
+  zoom_h_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(2),
   B => zoom_h_1,
   SUM => mixed_zoom_h_1
   );
-  zoom_v_1_mix : entity work.Adder_12bit_NoOverflow 
+  zoom_v_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(3),
   B => zoom_v_1,
   SUM => mixed_zoom_v_1
   );
-  circle_1_mix : entity work.Adder_12bit_NoOverflow 
+  circle_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(4),
   B => circle_1,
   SUM => mixed_circle_1
   );
-  gear_1_mix : entity work.Adder_12bit_NoOverflow 
+  gear_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(5),
   B => gear_1,
   SUM => mixed_gear_1
   );
-  lantern_1_mix : entity work.Adder_12bit_NoOverflow 
+  lantern_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(6),
   B => lantern_1,
   SUM => mixed_lantern_1
   );
-  fizz_1_mix : entity work.Adder_12bit_NoOverflow 
+  fizz_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(8),
   B => fizz_1,
@@ -341,49 +341,49 @@ begin
   );
   
   -- Mixers for shape gen 2
-   pos_h_2_mix : entity work.Adder_12bit_NoOverflow 
+   pos_h_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(8),
   B => pos_h_2,
   SUM => mixed_pos_h_2
   );
-  pos_v_2_mix : entity work.Adder_12bit_NoOverflow 
+  pos_v_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(10),
   B => zoom_v_2,
   SUM => mixed_pos_v_2
   );
-  zoom_h_2_mix : entity work.Adder_12bit_NoOverflow 
+  zoom_h_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(11),
   B => zoom_h_2,
   SUM => mixed_zoom_h_2
   );
-  zoom_v_2_mix : entity work.Adder_12bit_NoOverflow 
+  zoom_v_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(12),
   B => pos_v_2,
   SUM => mixed_zoom_v_2
   );
-  circle_2_mix : entity work.Adder_12bit_NoOverflow 
+  circle_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(13),
   B => circle_2,
   SUM => mixed_circle_2
   );
-  gear_2_mix : entity work.Adder_12bit_NoOverflow 
+  gear_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(14),
   B => gear_2,
   SUM => mixed_gear_2
   );
-  lantern_2_mix : entity work.Adder_12bit_NoOverflow 
+  lantern_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(15),
   B => lantern_2,
   SUM => mixed_lantern_2
   );
-  fizz_2_mix : entity work.Adder_12bit_NoOverflow 
+  fizz_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
   A => outputs(16),
   B => fizz_2,
