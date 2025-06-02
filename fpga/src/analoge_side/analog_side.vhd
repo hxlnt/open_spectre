@@ -208,22 +208,30 @@ begin
  -- attenuators for some of the analog matrix inputs
  
    osc1_sq_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                   clk => clk,
+                  signal1 => c_zero_12,
                   signal2 => osc1_out_sq,
                   alpha => osc1_alpha,
                   result => osc1_out_sq_att);
   osc1_sin_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                clk => clk,
+                signal1 => c_zero_12,
                   signal2 => osc1_out_sin,
                   alpha => osc1_alpha,
                   result => osc1_out_sin_att);
   osc2_sq_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                 clk => clk,
+                signal1 => c_zero_12,
                   signal2 => osc2_out_sq,
                   alpha => osc2_alpha,
                   result => osc2_out_sq_att);
   osc2_sin_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                clk => clk,
+                signal1 => c_zero_12,
                   signal2 => osc2_out_sin,
                   alpha => osc2_alpha,
                   result => osc2_out_sin_att);
@@ -236,7 +244,9 @@ begin
   noise_1_padded <= noise_1     & "00";
   noise_1_o <= noise_1(7);
   noise1_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                clk => clk,
+                signal1 => c_zero_12,
                   signal2 => noise_1_padded,
                   alpha => noise_alpha,
                   result => noise_1_att);
@@ -245,7 +255,9 @@ begin
   noise_2_padded <= noise_2     & "00";
   noise_2_o <= not noise_2(7); -- original circuit didnt do this, but i think its more interesting
   noise2_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                clk => clk,
+                signal1 => c_zero_12,
                   signal2 => noise_2_padded,
                   alpha => noise_alpha,
                   result => noise_2_att);
@@ -257,7 +269,9 @@ begin
   
   dsm_hi_i_padded <= dsm_hi_i     & "00";
   dsm_hi_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                clk => clk,
+                signal1 => c_zero_12,
                   signal2 => dsm_hi_i_padded,
                   alpha => dsm_hi_alpha,
                   result => dsm_hi_i_att);
@@ -282,7 +296,9 @@ begin
        );
   
   dsm_lo_att : entity work.AlphaBlend
-        port map (signal1 => c_zero_12,
+        port map (
+                clk => clk,
+                signal1 => c_zero_12,
                   signal2 => dsm_lo_i_slew,
                   alpha => dsm_lo_alpha,
                   result => dsm_lo_i_att);
@@ -493,6 +509,7 @@ begin
   YUV_out_levels : entity work.YUV_levels
     port
     map(
+    clk => clk,
     y_signal1 => y_signal1,
     y_signal2 => y_signal2,
     y_alpha   => y_alpha,

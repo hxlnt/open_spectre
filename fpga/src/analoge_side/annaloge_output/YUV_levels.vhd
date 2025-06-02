@@ -20,7 +20,9 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity YUV_levels is
-    Port ( y_signal1 : in STD_LOGIC_VECTOR(11 downto 0) := (others => '0');
+    Port ( 
+            clk : in std_logic;
+            y_signal1 : in STD_LOGIC_VECTOR(11 downto 0) := (others => '0');
            y_signal2 : in STD_LOGIC_VECTOR(11 downto 0);
            y_alpha   : in STD_LOGIC_VECTOR(11 downto 0) := (others => '1');
            y_result  : out STD_LOGIC_VECTOR(11 downto 0);
@@ -36,7 +38,9 @@ end YUV_levels;
 
 architecture Behavioral of YUV_levels is
     component AlphaBlend
-        Port ( signal1 : in STD_LOGIC_VECTOR(11 downto 0);
+        Port ( 
+                clk : in std_logic;
+                signal1 : in STD_LOGIC_VECTOR(11 downto 0);
                signal2 : in STD_LOGIC_VECTOR(11 downto 0);
                alpha   : in STD_LOGIC_VECTOR(11 downto 0);
                result  : out STD_LOGIC_VECTOR(11 downto 0));
@@ -46,19 +50,25 @@ architecture Behavioral of YUV_levels is
 begin
     -- Instantiate alpha blend modules
     level_y : AlphaBlend
-        port map (signal1 => y_signal1,
+        port map (
+                clk => clk,
+                signal1 => y_signal1,
                   signal2 => y_signal2,
                   alpha => y_alpha,
                   result => y_result);
 
     level_u : AlphaBlend
-        port map (signal1 => u_signal1,
+        port map (
+                clk => clk,
+                signal1 => u_signal1,
                   signal2 => u_signal2,
                   alpha => u_alpha,
                   result => u_result);
 
     level_v : AlphaBlend
-        port map (signal1 => v_signal1,
+        port map (
+                clk => clk,
+                signal1 => v_signal1,
                   signal2 => v_signal2,
                   alpha => v_alpha,
                   result => v_result);

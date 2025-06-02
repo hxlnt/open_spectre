@@ -31,7 +31,9 @@ end SinWaveGenerator;
 
 architecture Behavioral of SinWaveGenerator is
     signal counter, counterB : STD_LOGIC_VECTOR(13 downto 0) := (others => '0');
-    signal phase_accumulator,phase_accumulatorB, scaled_freq: STD_LOGIC_VECTOR(13 downto 0) := (others => '0');  -- Use 12 bits for phase accumulator
+    signal scaled_freq : STD_LOGIC_VECTOR(13 downto 0) := (others => '0');
+
+    signal phase_accumulator,phase_accumulatorB:  integer range 0 to 180;--unsigned(13 downto 0) := (others => '0');  -- Use 12 bits for phase accumulator
     signal rom_address, rom_address_dist : integer range 0 to 180;
     signal sine_table, sine_table_dist,sin_table_xmod : STD_LOGIC_VECTOR(11 downto 0);
     signal sine_table_summed, sine_table_summed_limited : STD_LOGIC_VECTOR(12 downto 0);
@@ -44,7 +46,7 @@ architecture Behavioral of SinWaveGenerator is
     
     signal attenuated_out   : STD_LOGIC_VECTOR(11 downto 0);
 
-    type ROM is array (0 to 360) of STD_LOGIC_VECTOR(11 downto 0);
+    type ROM is array (0 to 360) of STD_LOGIC_VECTOR(11 downto 0); -- i think this only needs to be 180
     constant sine_rom : ROM := (
 "011111111111",
 "100001000110",
@@ -419,8 +421,8 @@ begin
         if reset = '1' then
             counter <= (others => '0');
             counterB <= (others => '0');
-            phase_accumulator <= (others => '0');
-            phase_accumulatorB <= (others => '0');
+            phase_accumulator <= 0;
+            phase_accumulatorB <= 0;
             sync_edge <= '0';
         elsif rising_edge(clk) then
         
@@ -435,7 +437,7 @@ begin
             if sync_in = '1' and sync_edge = '0' then
                 sync_edge <= '1';
                 counter <= (others => '0');
-                phase_accumulator <= (others => '0');
+                phase_accumulator <= 0;
             else
                 sync_edge <= sync_in;
                 counter <= counter + 1;
@@ -448,32 +450,38 @@ begin
                 if counter = scaled_freq then
                     counter <= (others => '0');
                     phase_accumulator <= phase_accumulator + 1;
-                    if phase_accumulator = "11111111111111" then  -- Adjust the limit for 12 bits
-                        phase_accumulator <= (others => '0');
-                    end if;                    
+--                    if phase_accumulator = "11111111111111" then  -- Adjust the limit for 12 bits
+--                        phase_accumulator <= (others => '0');
+--                    end if;                    
                 end if;
                 if counterB = dist_freq then
                     counterB <= (others => '0');
                     phase_accumulatorB <= phase_accumulatorB + 1;
-                    if phase_accumulatorB = "11111111111111" then  -- Adjust the limit for 12 bits
-                        phase_accumulatorB <= (others => '0');
-                    end if;                    
+--                    if phase_accumulatorB = "11111111111111" then  -- Adjust the limit for 12 bits
+--                        phase_accumulatorB <= (others => '0');
+--                    end if;                    
                 end if;
                 
             end if;
         end if;
     end process;
 
-    -- ROM lookup
-    rom_address <= to_integer(unsigned(phase_accumulator)) mod 180 ;
-    -- Distort wave lookup
-    rom_address_dist <= to_integer(unsigned(phase_accumulatorB)) mod 180 ;
-    
 
+   
+    
+process(clk) -- ff the output to lower the logic levels in the acumulator path
+begin
+  if rising_edge(clk) then
+      -- ROM lookup
+    rom_address <= phase_accumulator;-- to_integer(unsigned(phase_accumulator)) mod 180 ; -- how manny entries are ther in my sin table?? 180 or 360
+    -- Distort wave lookup
+    rom_address_dist <= phase_accumulatorB;-- to_integer(unsigned(phase_accumulatorB)) mod 180 ;
     -- Create the full sine wave using symmetry
     sine_table <= sine_rom(rom_address);
     -- Create the distortion sinwave
     sine_table_dist <= sine_rom(rom_address_dist); -- needs to have a amplitude control to mix the level
+    end if;
+    end process;
     
 process(clk) -- modulate the sinwave by the attenuated other sinwave
   variable mult_resultA : unsigned(19 downto 0); -- 12+8
