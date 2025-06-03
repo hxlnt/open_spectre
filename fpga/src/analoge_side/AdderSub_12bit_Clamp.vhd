@@ -4,6 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity AdderSub_12bit_Clamp is
   Port ( 
+    clk      : in std_logic;
     A        : in  STD_LOGIC_VECTOR(11 downto 0); -- unsigned
     B        : in  STD_LOGIC_VECTOR(11 downto 0); -- signed
     Sum      : out STD_LOGIC_VECTOR(11 downto 0);
@@ -39,6 +40,12 @@ begin
 
 
   end process;
-      Sum <= STD_LOGIC_VECTOR(Clamped);
+  
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            Sum <= STD_LOGIC_VECTOR(Clamped);
+        end if;
+    end process;
 
 end Behavioral;

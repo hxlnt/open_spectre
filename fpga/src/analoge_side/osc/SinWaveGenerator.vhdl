@@ -42,6 +42,9 @@ architecture Behavioral of SinWaveGenerator is
     signal sync_in : STD_LOGIC := '0';
     signal dist_freq : STD_LOGIC_VECTOR(13 downto 0) := (others => '1');
     
+      signal atten_val    : unsigned(11 downto 0);
+  signal atten_val_d    : unsigned(11 downto 0);
+    
     --
     
     signal attenuated_out   : STD_LOGIC_VECTOR(11 downto 0);
@@ -486,18 +489,21 @@ begin
 process(clk) -- modulate the sinwave by the attenuated other sinwave
   variable mult_resultA : unsigned(19 downto 0); -- 12+8
   variable mult_resultB : unsigned(23 downto 0); -- 12+8
-  variable atten_val    : unsigned(11 downto 0);
+--  variable atten_val    : unsigned(11 downto 0);
+--  variable atten_val_d    : unsigned(11 downto 0);
+
 begin
   if rising_edge(clk) then
     -- Step 1: attenuate distortion
     mult_resultA := unsigned(sine_table_dist) * (unsigned(dist_level));  -- 12 x 8
-    atten_val := mult_resultA(19 downto 8);  -- keep 12 bits
+    atten_val <= mult_resultA(19 downto 8);  -- keep 12 bits
 
     -- Save result
-    attenuated_out <= std_logic_vector(atten_val);
+--    attenuated_out <= std_logic_vector(atten_val);
+    atten_val_d <= atten_val; 
 
     -- Step 2: use it to attenuate main sine
-    mult_resultB := unsigned(sine_table) * (4095 - atten_val);
+    mult_resultB := unsigned(sine_table) * (4095 - atten_val_d);
     sin_table_xmod <= std_logic_vector(mult_resultB(23 downto 12));
   end if;
 end process;

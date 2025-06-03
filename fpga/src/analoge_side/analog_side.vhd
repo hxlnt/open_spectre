@@ -240,9 +240,18 @@ begin
   mixer_inputs(1)  <= osc1_out_sin_att;
   mixer_inputs(2)  <= osc2_out_sq_att;
   mixer_inputs(3)  <= osc2_out_sin_att;
+  
+    
+    process(clk) -- ff'd to meet timing
+    begin
+        if rising_edge(clk) then
+            noise_1_o <= noise_1(7);
+            noise_2_o <= not noise_2(7); -- original circuit didnt do this, but i think its more interesting
+        end if;
+    end process;
+
                 
   noise_1_padded <= noise_1     & "00";
-  noise_1_o <= noise_1(7);
   noise1_att : entity work.AlphaBlend
         port map (
                 clk => clk,
@@ -253,7 +262,6 @@ begin
   mixer_inputs(4)  <= noise_1_att;
     
   noise_2_padded <= noise_2     & "00";
-  noise_2_o <= not noise_2(7); -- original circuit didnt do this, but i think its more interesting
   noise2_att : entity work.AlphaBlend
         port map (
                 clk => clk,
@@ -309,48 +317,56 @@ begin
  -- mixers for Shape Gen1
   pos_h_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(0),
   B => pos_h_1,
   SUM => mixed_pos_h_1
   );
   pos_v_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(1),
   B => pos_v_1,
   SUM => mixed_pos_v_1
   );
   zoom_h_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(2),
   B => zoom_h_1,
   SUM => mixed_zoom_h_1
   );
   zoom_v_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(3),
   B => zoom_v_1,
   SUM => mixed_zoom_v_1
   );
   circle_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(4),
   B => circle_1,
   SUM => mixed_circle_1
   );
   gear_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(5),
   B => gear_1,
   SUM => mixed_gear_1
   );
   lantern_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(6),
   B => lantern_1,
   SUM => mixed_lantern_1
   );
   fizz_1_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(8),
   B => fizz_1,
   SUM => mixed_fizz_1
@@ -359,48 +375,56 @@ begin
   -- Mixers for shape gen 2
    pos_h_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(8),
   B => pos_h_2,
   SUM => mixed_pos_h_2
   );
   pos_v_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(10),
   B => zoom_v_2,
   SUM => mixed_pos_v_2
   );
   zoom_h_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(11),
   B => zoom_h_2,
   SUM => mixed_zoom_h_2
   );
   zoom_v_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(12),
   B => pos_v_2,
   SUM => mixed_zoom_v_2
   );
   circle_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(13),
   B => circle_2,
   SUM => mixed_circle_2
   );
   gear_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(14),
   B => gear_2,
   SUM => mixed_gear_2
   );
   lantern_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(15),
   B => lantern_2,
   SUM => mixed_lantern_2
   );
   fizz_2_mix : entity work.AdderSub_12bit_Clamp 
   port map(
+  clk => clk,
   A => outputs(16),
   B => fizz_2,
   SUM => mixed_fizz_2
