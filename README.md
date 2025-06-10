@@ -1,21 +1,51 @@
-NEED TO REBUILD THIS README to its former glory
+# OPEN_SPECTRE
+## An open-source FPGA-based EMS SPECTRE video synth.
+*A project aimed at recreating the EMS SPECTRE VIDEO SYNTHESIZER in HDL*
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=LSMYWSM7M7EEA)
+Open to donations and contributors with FPGA experience. 😀 
 
-FILE SYSTEM BITSTREAM LOADER IDEA
-https://github.com/Cellgalvano/ESP32_SEA_SPIFFS_Loader/blob/master/ESP32_SEA_SPIFFS_Loader.ino
+###  ✨The EMS SPECTRE Colour Video ✨
+>Synthesizer is a unique and revolutionary new product: an instrument capable of producing exciting graphic images on an ordinary television screen. The complete SPECTRE package consists of the synthesizer itself, plus a Sony Trinitron colour monitor, and a Sony black-and-white TV camera. The synthesizer is compact (38"x23.5"x7"), portable (about 35 pounds/15.9KG), and unequalled in its simplicity and versatility.
 
-pcb inspo:
-https://github.com/timvideos/HDMI2USB-numato-opsis-hardware
+![EMS SPECTRE](/Spectron%20Resources/Product%20Photos/spectre1.jpg)
 
+### Design Info
+#### 🎉Aim 🎉
+The aim of this project is to preserve this rare and unique video synth by recreating it in an FPGA, but also to use it as a building block to make a Spectre that is both true to the original and also a modern tool for creativity.
+For more info in this process take a look at: 
+[Cloning Hardware Ethos](top%20level%20design/Cloning%20a%20process%20not%20a%20device.md)
 
-Current Utilisation:
+### 🍣Want to Contribute?🍣
+Amazing! If you have FPGA and or Verilog/VHDL skills we would love to have you involved. But, first, there are a few things you should know. 
+#### What to do first
+- Look through the resources folder to get an idea of what the EMS SPECTRE is and how it works
+- Look at the top-level diagram and the list of modules
+#### Project Details For Contributors
+- RTL in VHDL or Verilog (VHDL preferred, no system Verilog 😎 sorry) 
+- One module per file with a separate testbench (Verilog or VHDL test benches only, *not everything has one yet, but it should)
+- Test benches should print out a message at the end confirming if they are successful or not
+- No HSL or auto-generated code, no busses or interfaces for now (will be busses later)
+- Use any software you like, but a Vivado project will be supplied
+- Follow the template for file headers and comments 📑
+- Follow the folder structure for the project 📂
+- All code must be open source or MIT license 👍
 
-Analog_side: lut = 3745 | ff = 3627 | dsp = 15
+#### If after all that you still want to be involved you can do one of three things:
+- Email us at *OPEN.SPECTRE.PROJECT@gmail.com* and see what modules we need to make at the moment
+- Branch the repo, make a module, and submit a pull request 
+- If you are not any good at git/GitHub, if you write any modules you can email them to us and we will integrate them into the project
 
-Digital_side:
+### 🐙License🐙
+Creative Commons CC BY-NC
 
-CPU_interface:
+### Contributors
+-Remi Freer
+-Jacob Stoker
+-Robert D Jordan
 
-Shape_gen:
-
-* Based on Xilinx Series7 Zynq Synth
+### Donations
+We are very thankful to have received donations from the following people:
+Chris Korvin,
+Jay Hotchin,
+Milton Grimshaw, and more amazing anonymous people. 
