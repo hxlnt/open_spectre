@@ -18,4 +18,4 @@ CPU_interface:
 
 Shape_gen:
 
-* Based on Xilinx Series7 Zynq Synthisis
+* Based on Xilinx Series7 Zynq Synth
