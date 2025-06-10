@@ -23,21 +23,33 @@ entity SinWaveGenerator is
         sync_sel : in STD_LOGIC_VECTOR(1 downto 0);
         sync_plus : in STD_LOGIC;
         sync_minus : in STD_LOGIC;
+        dist_level      : in STD_LOGIC_VECTOR(7 downto 0) := (others => '0'); -- distortion wave level
         sin_out : out STD_LOGIC_VECTOR(11 downto 0);
         square_out : out STD_LOGIC
     );
 end SinWaveGenerator;
 
 architecture Behavioral of SinWaveGenerator is
-    signal counter : STD_LOGIC_VECTOR(9 downto 0) := (others => '0');
-    signal phase_accumulator, scaled_freq: STD_LOGIC_VECTOR(13 downto 0) := (others => '0');  -- Use 12 bits for phase accumulator
-    signal rom_address : integer range 0 to 180;
-    signal sine_table : STD_LOGIC_VECTOR(11 downto 0);
+    signal counter, counterB : STD_LOGIC_VECTOR(13 downto 0) := (others => '0');
+    signal scaled_freq : STD_LOGIC_VECTOR(13 downto 0) := (others => '0');
+
+    signal phase_accumulator,phase_accumulatorB:  integer range 0 to 180;--unsigned(13 downto 0) := (others => '0');  -- Use 12 bits for phase accumulator
+    signal rom_address, rom_address_dist : integer range 0 to 180;
+    signal sine_table, sine_table_dist,sin_table_xmod : STD_LOGIC_VECTOR(11 downto 0);
+    signal sine_table_summed, sine_table_summed_limited : STD_LOGIC_VECTOR(12 downto 0);
     signal square_i : STD_LOGIC := '0';
     signal sync_edge : STD_LOGIC := '0';
     signal sync_in : STD_LOGIC := '0';
+    signal dist_freq : STD_LOGIC_VECTOR(13 downto 0) := (others => '1');
+    
+      signal atten_val    : unsigned(11 downto 0);
+  signal atten_val_d    : unsigned(11 downto 0);
+    
+    --
+    
+    signal attenuated_out   : STD_LOGIC_VECTOR(11 downto 0);
 
-    type ROM is array (0 to 360) of STD_LOGIC_VECTOR(11 downto 0);
+    type ROM is array (0 to 360) of STD_LOGIC_VECTOR(11 downto 0); -- i think this only needs to be 180
     constant sine_rom : ROM := (
 "011111111111",
 "100001000110",
@@ -405,12 +417,15 @@ architecture Behavioral of SinWaveGenerator is
 begin
 
     scaled_freq <= freq & "0000";
+    dist_freq <= "00" & freq & "11";
 
     process(clk, reset, sync_in)
     begin
         if reset = '1' then
             counter <= (others => '0');
-            phase_accumulator <= (others => '0');
+            counterB <= (others => '0');
+            phase_accumulator <= 0;
+            phase_accumulatorB <= 0;
             sync_edge <= '0';
         elsif rising_edge(clk) then
         
@@ -425,10 +440,11 @@ begin
             if sync_in = '1' and sync_edge = '0' then
                 sync_edge <= '1';
                 counter <= (others => '0');
-                phase_accumulator <= (others => '0');
+                phase_accumulator <= 0;
             else
                 sync_edge <= sync_in;
                 counter <= counter + 1;
+                counterB <= counterB + 1;
                 if rom_address > 90 then
                     square_i <= '1';
                     else 
@@ -437,23 +453,77 @@ begin
                 if counter = scaled_freq then
                     counter <= (others => '0');
                     phase_accumulator <= phase_accumulator + 1;
-                    if phase_accumulator = "11111111111111" then  -- Adjust the limit for 12 bits
-                        phase_accumulator <= (others => '0');
-                    end if;
+--                    if phase_accumulator = "11111111111111" then  -- Adjust the limit for 12 bits
+--                        phase_accumulator <= (others => '0');
+--                    end if;                    
                 end if;
+                if counterB = dist_freq then
+                    counterB <= (others => '0');
+                    phase_accumulatorB <= phase_accumulatorB + 1;
+--                    if phase_accumulatorB = "11111111111111" then  -- Adjust the limit for 12 bits
+--                        phase_accumulatorB <= (others => '0');
+--                    end if;                    
+                end if;
+                
             end if;
         end if;
     end process;
 
-    -- ROM lookup
-    rom_address <= to_integer(unsigned(phase_accumulator)) mod 180 ;
-    
 
+   
+    
+process(clk) -- ff the output to lower the logic levels in the acumulator path
+begin
+  if rising_edge(clk) then
+      -- ROM lookup
+    rom_address <= phase_accumulator;-- to_integer(unsigned(phase_accumulator)) mod 180 ; -- how manny entries are ther in my sin table?? 180 or 360
+    -- Distort wave lookup
+    rom_address_dist <= phase_accumulatorB;-- to_integer(unsigned(phase_accumulatorB)) mod 180 ;
     -- Create the full sine wave using symmetry
     sine_table <= sine_rom(rom_address);
-    -- sine_table(11 downto 0) <= sine_table(11 downto 0) & not sine_table(11);  -- Invert the second half
+    -- Create the distortion sinwave
+    sine_table_dist <= sine_rom(rom_address_dist); -- needs to have a amplitude control to mix the level
+    end if;
+    end process;
+    
+process(clk) -- modulate the sinwave by the attenuated other sinwave
+  variable mult_resultA : unsigned(19 downto 0); -- 12+8
+  variable mult_resultB : unsigned(23 downto 0); -- 12+8
+--  variable atten_val    : unsigned(11 downto 0);
+--  variable atten_val_d    : unsigned(11 downto 0);
 
-    sin_out <= sine_table;
+begin
+  if rising_edge(clk) then
+    -- Step 1: attenuate distortion
+    mult_resultA := unsigned(sine_table_dist) * (unsigned(dist_level));  -- 12 x 8
+    atten_val <= mult_resultA(19 downto 8);  -- keep 12 bits
+
+    -- Save result
+--    attenuated_out <= std_logic_vector(atten_val);
+    atten_val_d <= atten_val; 
+
+    -- Step 2: use it to attenuate main sine
+    mult_resultB := unsigned(sine_table) * (4095 - atten_val_d);
+    sin_table_xmod <= std_logic_vector(mult_resultB(23 downto 12));
+  end if;
+end process;
+    
+--    process(clk) 
+--        begin
+--        if rising_edge(clk) then
+--        sine_table_summed <= ('0'& sine_table) + ('0' & attenuated_out); 
+
+--        if sine_table_summed(12) = '1' then
+--            sine_table_summed_limited <= (others => '1');
+--         else
+--            sine_table_summed_limited <= sine_table_summed;
+--         end if;
+         
+--          end if;
+        
+--        end process;
+
+    sin_out <= sin_table_xmod;
     square_out <= square_i;
 
 end Behavioral;

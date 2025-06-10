@@ -27,6 +27,7 @@ architecture Behavioral of SinWaveGenerator_TB is
     signal freq :  STD_LOGIC_VECTOR(9 downto 0);
     signal sin_out : STD_LOGIC_VECTOR(11 downto 0);
     signal square_out : STD_LOGIC;
+    signal dist_level      : STD_LOGIC_VECTOR(7 downto 0) := (others => '0'); -- distortion wave level
 begin
     -- Instantiate the SinWaveGenerator module
     UUT: entity work.SinWaveGenerator
@@ -34,6 +35,7 @@ begin
             clk => clk,
             reset => reset,
             freq => freq,
+            dist_level => dist_level,
             sync_sel => sync_sel,
             sync_plus => sync_in,
             sync_minus => sync_in,

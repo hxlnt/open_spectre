@@ -41,11 +41,25 @@ architecture Behavioral of random_voltage is
   signal recycle_d : std_logic := '0';
   signal sipo_b_rst : std_logic := '0';
   signal recycle_re,recycle_re_d,recycle_re_d2,recycle_re_d3 : std_logic := '0'; -- 
-  signal recycle_stretched: std_logic := '0'; -- 
+  signal recycle_stretched: std_logic := '0'; 
+  signal lfsr: std_logic_vector(9 downto 0);
 
 begin
 
-  mux_in <= extra_in & noise_1_to_slew(0) & noise_freq(2 downto 0) & extra_in & noise_1_to_slew(1) & '1';
+--  mux_in <= extra_in & noise_1_to_slew(0) & noise_freq(2 downto 0) & extra_in & noise_1_to_slew(1) & '1';
+  mux_in <= lfsr(9) & noise_1_to_slew(7) & lfsr(5) & lfsr(1 downto 0) & noise_1_to_slew(7)  & noise_1_to_slew(8) & '1';
+
+  
+  lfsr_rnd : entity work.rand_num
+  generic map(
+  N => 10
+  )
+    port map(
+    clk => Clock,
+    en => sipo_clk, -- what if this were much slower like /10 then would the patterns be more repeating??
+    reset => rst,
+    q => lfsr
+    );
 
   sipo_clk <= cnt_match;
   
@@ -57,7 +71,7 @@ begin
     recycle_re_d2 <= recycle_re_d;
     recycle_re_d3 <= recycle_re_d2;
     
-    recycle_stretched <= recycle_re or recycle_re_d or recycle_re_d2 or recycle_re_d3;
+    recycle_stretched <= recycle or recycle_re_d or recycle_re_d2 or recycle_re_d3;
     
     if recycle = '1' and recycle_d = '0' then
         recycle_re <= '1';
@@ -69,7 +83,8 @@ begin
   
   sipo_1 : entity work.shift_sipo
     port map(
-      Clock => sipo_clk, 
+      Clock => Clock, 
+      shift => sipo_clk,
       SinA => Sin, 
       SinB => Sin, 
       rst => rst,
@@ -83,7 +98,8 @@ begin
 
   sipo_2 : entity work.shift_sipo
       port map(
-        Clock => sipo_clk, 
+        Clock => Clock, 
+        shift => sipo_clk,
         SinA => spio_out_1(7), 
         SinB => spio_out_1(7), 
         rst => '0',
