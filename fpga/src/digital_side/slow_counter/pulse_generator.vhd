@@ -30,22 +30,23 @@ entity pulse_generator is
 end entity pulse_generator;
 
 architecture Behavioral of pulse_generator is
-    signal toggle_counter : natural range 0 to toggle_period - 1 := 0;
-    signal toggle_output : std_logic := '0';
+    signal toggle_counter : unsigned(27 downto 0) := (others => '0'); -- 28 bits for 156_250_000
+    signal toggle_output  : std_logic := '0';
+    constant toggle_period_c : unsigned(27 downto 0) := to_unsigned(toggle_period - 1, 28);
 begin
     process(clk)
     begin
         if rising_edge(clk) then
+            output <= toggle_output;
             if enable = '1' then
-                if toggle_counter = toggle_period - 1 then
+                if toggle_counter = toggle_period_c then
                     toggle_output <= not toggle_output;
-                    toggle_counter <= 0;
+                    toggle_counter <= (others => '0');
                 else
                     toggle_counter <= toggle_counter + 1;
                 end if;
             end if;
         end if;
     end process;
+end architecture;
 
-    output <= toggle_output;
-end architecture Behavioral;
