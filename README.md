@@ -2,9 +2,6 @@
 ## An open-source FPGA-based EMS SPECTRE video synth.
 *A project aimed at recreating the EMS SPECTRE VIDEO SYNTHESIZER in HDL*
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=LSMYWSM7M7EEA)
-Open to donations and contributors with FPGA experience. 😀 
-
 ###  ✨The EMS SPECTRE Colour Video ✨
 >Synthesizer is a unique and revolutionary new product: an instrument capable of producing exciting graphic images on an ordinary television screen. The complete SPECTRE package consists of the synthesizer itself, plus a Sony Trinitron colour monitor, and a Sony black-and-white TV camera. The synthesizer is compact (38"x23.5"x7"), portable (about 35 pounds/15.9KG), and unequalled in its simplicity and versatility.
 
